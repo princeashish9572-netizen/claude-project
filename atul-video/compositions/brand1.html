@@ -1,0 +1,36 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    #brand1-scrim { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 38% at 50% 52%, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%); }
+    #brand1-stage { position: absolute; left: 260.0px; top: 720.0px; width: 560px; height: 560px; perspective: 1400px; }
+    #brand1-rays { position: absolute; left: -196.0px; top: -196.0px; width: 952.0px; height: 952.0px; background: repeating-conic-gradient(from 0deg, rgba(255,210,110,0.55) 0deg 4deg, rgba(255,210,110,0) 4deg 15deg);
+      -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 62%);
+      mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 62%);
+      mix-blend-mode: screen; border-radius: 50%; }
+    #brand1-ring { position: absolute; left: 0; top: 0; width: 560px; height: 560px; border-radius: 50%;
+      border: 6px solid rgba(255,214,120,0.95); box-shadow: 0 0 40px rgba(255,200,90,0.9), inset 0 0 40px rgba(255,200,90,0.6); }
+    #brand1-coin { position: absolute; left: 0; top: 0; width: 560px; height: 560px; border-radius: 50%; overflow: hidden; }
+    #brand1-logo { position: absolute; left: 0; top: 0; width: 560px; height: 560px; }
+    #brand1-band { position: absolute; left: -260px; top: -100px; width: 200px; height: 760px; transform-origin: 50% 50%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,235,0.85) 50%, rgba(255,255,255,0) 100%); mix-blend-mode: screen; }
+  </style>
+  <div id="root" data-composition-id="brand1" data-width="1080" data-height="1920">
+    <div id="brand1-scrim" class="clip" data-start="0" data-duration="2.8"></div>
+    <div id="brand1-stage" class="clip" data-start="0" data-duration="2.8" data-layout-allow-overflow data-layout-ignore>
+      <div id="brand1-rays"></div>
+      <div id="brand1-ring"></div>
+      <div id="brand1-coin"><img id="brand1-logo" src="assets/logo.png" /><div id="brand1-band"></div></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#brand1-scrim", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0);
+    tl.fromTo("#brand1-coin", { rotationY: -540, scale: 0.2 }, { rotationY: 0, scale: 1, duration: 1.1, ease: "power3.out" }, 0);
+    tl.fromTo("#brand1-rays", { opacity: 0, scale: 0.4, rotation: 0 }, { opacity: 1, scale: 1, rotation: 60, duration: 2.4, ease: "power2.out" }, 0.2);
+    tl.fromTo("#brand1-ring", { opacity: 1, scale: 0.9 }, { opacity: 0, scale: 1.8, duration: 0.8, ease: "power2.out" }, 0.9);
+    tl.fromTo("#brand1-band", { x: 0, rotation: 20 }, { x: 1000, rotation: 20, duration: 0.8, ease: "power2.inOut" }, 1.2);
+    tl.fromTo("#brand1-stage", { scale: 1, opacity: 1 }, { scale: 0.4, opacity: 0, duration: 0.45, ease: "back.in(2)" }, 2.3);
+    tl.to("#brand1-scrim", { opacity: 0, duration: 0.4, ease: "power2.in" }, 2.35);
+    window.__timelines["brand1"] = tl;
+  </script>
+</template>

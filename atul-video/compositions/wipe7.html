@@ -1,0 +1,24 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .wipe7-bar { position: absolute; left: 0; top: -400px; height: 2700px; transform-origin: 50% 50%; mix-blend-mode: screen; }
+    #wipe7-a { width: 260px; background: linear-gradient(90deg, rgba(255,200,90,0) 0%, rgba(255,214,120,0.95) 50%, rgba(255,200,90,0) 100%); }
+    #wipe7-b { width: 120px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,250,230,0.9) 50%, rgba(255,255,255,0) 100%); }
+    #wipe7-flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, rgba(255,236,190,0.85) 0%, rgba(255,200,100,0.35) 40%, rgba(255,200,100,0) 75%); }
+  </style>
+  <div id="root" data-composition-id="wipe7" data-width="1080" data-height="1920">
+    <div id="wipe7-fx" class="clip" data-start="0" data-duration="0.8" data-layout-ignore data-layout-allow-overflow>
+      <div id="wipe7-flash"></div>
+      <div id="wipe7-a" class="wipe7-bar"></div>
+      <div id="wipe7-b" class="wipe7-bar"></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const dir = 1, rot = 24;
+    tl.fromTo("#wipe7-a", { x: dir > 0 ? -500 : 1300, rotation: rot }, { x: dir > 0 ? 1300 : -500, rotation: rot, duration: 0.55, ease: "power2.inOut" }, 0);
+    tl.fromTo("#wipe7-b", { x: dir > 0 ? -700 : 1500, rotation: rot }, { x: dir > 0 ? 1400 : -600, rotation: rot, duration: 0.6, ease: "power2.inOut" }, 0.04);
+    tl.fromTo("#wipe7-flash", { opacity: 0.9 }, { opacity: 0, duration: 0.45, ease: "power2.out" }, 0);
+    window.__timelines["wipe7"] = tl;
+  </script>
+</template>

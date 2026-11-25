@@ -1,0 +1,28 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    #cta-box { position: absolute; left: 150px; top: 760px; width: 600px; height: 380px; }
+    .cta-pill { position: relative; display: flex; align-items: center; gap: 22px; height: 104px; margin-bottom: 22px; padding: 0 34px; width: 520px;
+      border-radius: 60px; background: linear-gradient(135deg, rgba(25,17,4,0.92), rgba(60,38,8,0.88)); border: 3px solid #f5c451;
+      box-shadow: 0 0 26px rgba(245,196,81,0.5); }
+    .cta-pill span { font-family: Montserrat, sans-serif; font-weight: 900; font-size: 52px; letter-spacing: 0.08em; background: linear-gradient(180deg, #fff4c8 0%, #f5c451 45%, #b77a1e 100%);-webkit-background-clip: text; background-clip: text; color: transparent; }
+  </style>
+  <div id="root" data-composition-id="cta" data-width="1080" data-height="1920">
+    <div id="cta-box" class="clip" data-start="0" data-duration="6.20">
+        <div id="cta-like" class="cta-pill"><svg viewBox="0 0 24 24" width="64" height="64"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z" fill="#c8202a" stroke="#fff1bf" stroke-width="1.2"/></svg><span>LIKE</span></div>
+        <div id="cta-share" class="cta-pill"><svg viewBox="0 0 24 24" width="64" height="64"><path d="M14 4l7 7-7 7v-4c-5 0-8.5 1.5-11 5 1-5 4-10 11-11z" fill="#f5c451"/></svg><span>SHARE</span></div>
+        <div id="cta-follow" class="cta-pill"><svg viewBox="0 0 24 24" width="64" height="64"><circle cx="12" cy="12" r="10" fill="#f5c451"/><path d="M12 7v10M7 12h10" stroke="#1a1204" stroke-width="2.6" stroke-linecap="round"/></svg><span>FOLLOW</span></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const ids = ["#cta-like", "#cta-share", "#cta-follow"];
+    ids.forEach((id, i) => {
+      tl.fromTo(id, { x: -700, opacity: 0 }, { x: 0, opacity: 1, duration: 0.55, ease: "back.out(1.6)" }, 0.15 + i * 0.22);
+      tl.fromTo(id + " svg", { scale: 1 }, { scale: 1.35, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1 }, 1.4 + i * 0.7);
+      tl.fromTo(id, { scale: 1 }, { scale: 1.06, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 1.4 + i * 0.7);
+    });
+    tl.to("#cta-box", { opacity: 0, x: 200, duration: 0.4, ease: "power2.in" }, 5.70);
+    window.__timelines["cta"] = tl;
+  </script>
+</template>
