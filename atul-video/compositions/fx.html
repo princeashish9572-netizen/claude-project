@@ -1,0 +1,56 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .fx-leak {
+      position: absolute; left: 0; top: 0; width: 900px; height: 900px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,190,80,0.55) 0%, rgba(255,120,40,0.25) 35%, rgba(255,120,40,0) 70%);
+      mix-blend-mode: screen; opacity: 0;
+    }
+    .fx-spark {
+      position: absolute; left: 0; top: 0; width: 10px; height: 10px; border-radius: 50%;
+      background: radial-gradient(circle, #fff8dc 0%, rgba(255,205,100,0.9) 35%, rgba(255,205,100,0) 70%);
+      mix-blend-mode: screen;
+    }
+  </style>
+  <div id="root" data-composition-id="fx" data-width="1080" data-height="1920">
+    <div id="fx-layer" class="clip" data-start="0" data-duration="83" data-layout-ignore data-layout-allow-overflow>
+      <div id="fx-leak-a" class="fx-leak"></div>
+      <div id="fx-leak-b" class="fx-leak"></div>
+      <div id="fx-sparks"></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const D = 83;
+    // Seeded PRNG: same sparks every render.
+    let s = 20171;
+    const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+    const host = document.querySelector("#fx-sparks");
+    for (let i = 0; i < 34; i++) {
+      const el = document.createElement("div");
+      el.className = "fx-spark";
+      el.id = "fx-spark-" + i;
+      host.appendChild(el);
+      // Keep sparks on the sides, away from the face.
+      const side = rnd() < 0.5;
+      const x = side ? 20 + rnd() * 230 : 830 + rnd() * 230;
+      const size = 0.5 + rnd() * 1.6;
+      const period = 6 + rnd() * 8;
+      const reps = Math.ceil(D / period);
+      const y0 = 1950 - rnd() * 600;
+      tl.fromTo(el, { x: x, y: y0, scale: size, opacity: 0 },
+        { y: y0 - 1500, x: x + (rnd() - 0.5) * 160, duration: period, ease: "none", repeat: reps - 1 }, rnd() * 3);
+      tl.fromTo(el, { opacity: 0 }, { opacity: 0.35 + rnd() * 0.45, duration: period / 2, ease: "sine.inOut", yoyo: true, repeat: reps * 2 - 1 }, 0);
+    }
+    // Golden light-leak sweeps across the frame every ~11 s.
+    const sweeps = [4.2, 16.3, 27.1, 38.0, 49.8, 62.2, 73.2];
+    sweeps.forEach((t, i) => {
+      const id = i % 2 ? "#fx-leak-b" : "#fx-leak-a";
+      const fromLeft = i % 2 === 0;
+      tl.fromTo(id, { x: fromLeft ? -700 : 900, y: fromLeft ? 200 : 900, opacity: 0, scale: 1 },
+        { x: fromLeft ? 900 : -700, y: fromLeft ? 700 : 300, scale: 1.4, duration: 2.6, ease: "sine.inOut" }, t);
+      tl.fromTo(id, { opacity: 0 }, { opacity: 0.9, duration: 1.3, ease: "sine.inOut", yoyo: true, repeat: 1 }, t);
+    });
+    window.__timelines["fx"] = tl;
+  </script>
+</template>

@@ -1,0 +1,52 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; }
+    #lt2-card {
+      position: absolute; left: 96px; top: 1010px; width: 680px; height: 220px;
+      border-radius: 22px; overflow: hidden;
+      background: linear-gradient(135deg, rgba(18,13,4,0.86), rgba(10,8,4,0.74));
+      border: 2px solid rgba(245,196,81,0.55);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.55), 0 0 30px rgba(245,196,81,0.25);
+    }
+    #lt2-logo { position: absolute; left: 16px; top: 44px; width: 144px; height: 132px; object-fit: contain; }
+    #lt2-bar { position: absolute; left: 172px; top: 36px; width: 6px; height: 148px; border-radius: 3px; background: linear-gradient(180deg, #fff1bf, #f5c451, #a8701c); transform-origin: 50% 0; }
+    #lt2-name {
+      position: absolute; left: 192px; top: 34px; width: 480px;
+      font-family: Montserrat, sans-serif; font-weight: 900; font-size: 76px; line-height: 1.05; letter-spacing: 0.02em;
+      background: linear-gradient(180deg, #fff4c8 0%, #f5c451 45%, #b77a1e 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    #lt2-rule { position: absolute; left: 194px; top: 128px; width: 470px; height: 3px; background: linear-gradient(90deg, #f5c451, rgba(245,196,81,0)); transform-origin: 0 50%; }
+    #lt2-org {
+      position: absolute; left: 194px; top: 144px; width: 480px;
+      font-family: "Playfair Display", serif; font-weight: 700; font-size: 32px; letter-spacing: 0.08em; color: #fff;
+    }
+    #lt2-glint {
+      position: absolute; left: -200px; top: 0; width: 140px; height: 220px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,246,210,0.35), rgba(255,255,255,0));
+    }
+  </style>
+  <div id="root" data-composition-id="lt2" data-width="1080" data-height="1920">
+    <div id="lt2-card" class="clip" data-start="0" data-duration="6">
+      <img id="lt2-logo" src="assets/logo.png" />
+      <div id="lt2-bar"></div>
+      <div id="lt2-name" data-var-text="speaker">ATUL SIR</div>
+      <div id="lt2-rule"></div>
+      <div id="lt2-org" data-var-text="org">BHASKAR FOUNDATION</div>
+      <div id="lt2-glint" data-layout-ignore></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#lt2-card", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0);
+    tl.fromTo("#lt2-logo", { scale: 0.4, rotation: -30, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.6, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#lt2-bar", { scaleY: 0 }, { scaleY: 1, duration: 0.4, ease: "power3.out" }, 0.15);
+    tl.fromTo("#lt2-name", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0.25);
+    tl.fromTo("#lt2-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, 0.45);
+    tl.fromTo("#lt2-org", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 0.6);
+    tl.fromTo("#lt2-glint", { x: 0 }, { x: 1150, duration: 1.1, ease: "power2.inOut" }, 1.1);
+    tl.fromTo("#lt2-glint", { x: 0 }, { x: 1150, duration: 1.1, ease: "power2.inOut", immediateRender: false }, 3.4);
+    tl.to("#lt2-card", { opacity: 0, y: 30, duration: 0.35, ease: "power2.in" }, 5.55);
+    window.__timelines["lt2"] = tl;
+  </script>
+</template>

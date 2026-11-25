@@ -1,0 +1,60 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #outro-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 75% 50% at 50% 46%, #2a1a05 0%, #0b0703 55%, #000 100%);
+    }
+    #outro-stage { position: absolute; left: 140px; top: 560px; width: 800px; height: 730px; }
+    #outro-rays {
+      position: absolute; left: -260px; top: -300px; width: 1320px; height: 1320px; border-radius: 50%;
+      background: repeating-conic-gradient(from 0deg, rgba(255,210,110,0.45) 0deg 4deg, rgba(255,210,110,0) 4deg 14deg);
+      -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,0.55) 30%, rgba(0,0,0,0) 62%);
+      mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,0.55) 30%, rgba(0,0,0,0) 62%);
+      mix-blend-mode: screen;
+    }
+    #outro-ring {
+      position: absolute; left: 60px; top: 25px; width: 680px; height: 680px; border-radius: 50%;
+      border: 6px solid rgba(255,214,120,0.95); box-shadow: 0 0 40px rgba(255,200,90,0.9);
+    }
+    #outro-logo { position: absolute; left: 0; top: 0; width: 800px; height: 730px; object-fit: contain; }
+    #outro-shine {
+      position: absolute; left: 0; top: 0; width: 800px; height: 730px; overflow: hidden;
+      -webkit-mask-image: url(assets/logo.png); mask-image: url(assets/logo.png);
+      -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+    }
+    #outro-band {
+      position: absolute; left: -300px; top: -100px; width: 240px; height: 1000px;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,240,0.95) 50%, rgba(255,255,255,0) 100%);
+    }
+    #outro-name {
+      position: absolute; left: 140px; top: 1330px; width: 800px; text-align: center;
+      font-family: Montserrat, sans-serif; font-weight: 900; font-size: 64px; letter-spacing: 0.14em;
+      background: linear-gradient(180deg, #fff4c8 0%, #f5c451 50%, #b77a1e 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+  </style>
+  <div id="root" data-composition-id="outro" data-width="1080" data-height="1920">
+    <div id="outro-bg" class="clip" data-start="0" data-duration="4.9"></div>
+    <div id="outro-stage" class="clip" data-start="0.4" data-duration="4.5" data-layout-allow-overflow data-layout-ignore>
+      <div id="outro-rays"></div>
+      <div id="outro-ring"></div>
+      <img id="outro-logo" src="assets/logo.png" />
+      <div id="outro-shine"><div id="outro-band"></div></div>
+    </div>
+    <div id="outro-name" class="clip" data-start="1.1" data-duration="3.8" data-var-text="speaker">ATUL SIR</div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#outro-bg", { opacity: 0 }, { opacity: 0.92, duration: 1.0, ease: "power2.out" }, 0);
+    tl.to("#outro-bg", { opacity: 1, duration: 0.5, ease: "none" }, 1.1);
+    tl.fromTo("#outro-logo", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.8)" }, 0.4);
+    tl.fromTo("#outro-rays", { opacity: 0, scale: 0.6, rotation: 0 }, { opacity: 1, scale: 1, rotation: 50, duration: 4.4, ease: "power1.out" }, 0.45);
+    tl.fromTo("#outro-ring", { opacity: 1, scale: 0.8 }, { opacity: 0, scale: 1.6, duration: 1.0, ease: "power2.out" }, 0.75);
+    tl.fromTo("#outro-band", { x: 0 }, { x: 1400, duration: 1.0, ease: "power2.inOut" }, 1.4);
+    tl.fromTo("#outro-band", { x: 0 }, { x: 1400, duration: 1.0, ease: "power2.inOut", immediateRender: false }, 3.0);
+    tl.fromTo("#outro-name", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, ease: "power3.out" }, 1.1);
+    tl.fromTo("#outro-stage", { y: 0 }, { y: -14, duration: 3.6, ease: "sine.inOut" }, 1.2);
+    window.__timelines["outro"] = tl;
+  </script>
+</template>
