@@ -1,0 +1,38 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #b13-cap { position:absolute; left:30px; top:100px; width:590px; text-align:center; font-family:Poppins, sans-serif; font-weight:700; font-size:42px; line-height:1.15; color:#fff; text-shadow: 0 0 18px rgba(255,255,255,0.85), 0 0 40px rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.6); }
+    #b13-cap b { color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }
+    #b13-pill { position:absolute; left:0; top:860px; width:650px; text-align:center; }
+    #b13-pill .pl { display:inline-block; padding: 12px 30px; border-radius: 14px; font-family:Poppins, sans-serif; font-weight: 700; color:#1d1503;background: linear-gradient(180deg, #fff7b8 0%, #f9dc4f 100%); box-shadow: 0 0 26px rgba(255,226,90,0.85), 0 6px 18px rgba(0,0,0,0.45); font-size:42px; }
+    #b13-pill .sub { font-family:Poppins, sans-serif; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }
+    #b13-bg { position:absolute; inset:0; background: radial-gradient(ellipse 90% 60% at 50% 35%, #3a2a17 0%, #17120c 55%, #07060a 100%); }
+    #b13-art { position:absolute; left:0; top:0; width:650px; height:1125px; }
+    #b13-target { position:absolute; left:125px; top:320px; width:400px; height:400px; }
+    #b13-arrow { position:absolute; left:0; top:0; width:400px; height:400px; }
+  </style>
+  <div id="root" data-composition-id="b13" data-width="650" data-height="1125">
+    <div id="b13-bg" class="clip" data-start="0" data-duration="8.49" data-layout-ignore></div>
+    <div id="b13-art" class="clip" data-start="0" data-duration="8.49" data-layout-ignore data-layout-allow-overflow>
+      <svg id="b13-target" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="92" fill="#e3342f"/><circle cx="100" cy="100" r="70" fill="#fff"/><circle cx="100" cy="100" r="48" fill="#e3342f"/>
+        <circle cx="100" cy="100" r="26" fill="#fff"/><circle cx="100" cy="100" r="10" fill="#e3342f"/>
+        <g id="b13-arrow-g"><line x1="100" y1="100" x2="190" y2="10" stroke="#f5c451" stroke-width="7" stroke-linecap="round"/>
+          <path d="M180 4 L198 2 L196 20 Z" fill="#f5c451"/></g>
+      </svg>
+    </div>
+    <div id="b13-cap" class="clip" data-start="0" data-duration="8.49"><b>Weakness</b> pata kar li<br>aur uspar kaam kiya...</div>
+    <div id="b13-pill" class="clip" data-start="0" data-duration="8.49"><span class="pl">WEAKNESS PE KAAM</span></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#b13-cap", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b13-pill .pl", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.25);
+    tl.fromTo("#b13-bg", { opacity: 0, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, 0);
+    tl.fromTo("#b13-bg", { scale: 1 }, { scale: 1.06, duration: 6, ease: "none", immediateRender: false }, 0.35);
+    tl.fromTo("#b13-target", { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.8)" }, 0.05);
+    tl.fromTo("#b13-arrow-g", { x: 160, y: -160, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.35, ease: "power4.in" }, 1.4);
+    tl.fromTo("#b13-target", { x: 0 }, { x: 8, duration: 0.06, ease: "none", yoyo: true, repeat: 5, immediateRender: false }, 1.75);
+    window.__timelines["b13"] = tl;
+  </script>
+</template>

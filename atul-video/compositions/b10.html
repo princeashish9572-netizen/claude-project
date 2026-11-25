@@ -1,0 +1,40 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #b10-cap { position:absolute; left:30px; top:100px; width:590px; text-align:center; font-family:Poppins, sans-serif; font-weight:700; font-size:46px; line-height:1.15; color:#fff; text-shadow: 0 0 18px rgba(255,255,255,0.85), 0 0 40px rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.6); }
+    #b10-cap b { color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }
+    #b10-pill { position:absolute; left:0; top:860px; width:650px; text-align:center; }
+    #b10-pill .pl { display:inline-block; padding: 12px 30px; border-radius: 14px; font-family:Poppins, sans-serif; font-weight: 700; color:#1d1503;background: linear-gradient(180deg, #fff7b8 0%, #f9dc4f 100%); box-shadow: 0 0 26px rgba(255,226,90,0.85), 0 6px 18px rgba(0,0,0,0.45); font-size:30px; }
+    #b10-pill .sub { font-family:Poppins, sans-serif; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }
+    #b10-bg { position:absolute; inset:0; background: radial-gradient(ellipse 90% 60% at 50% 35%, #3a2a17 0%, #17120c 55%, #07060a 100%); }
+    #b10-art { position:absolute; left:0; top:0; width:650px; height:1125px; }
+    #b10-paper { position:absolute; left:165px; top:330px; width:320px; height:420px; border-radius:14px; background:#fbf6e9; box-shadow:0 20px 50px rgba(0,0,0,0.6); padding:30px; }
+    #b10-paper .hd { font-family:Poppins, sans-serif; font-weight:800; font-size:34px; color:#a3151b; text-align:center; margin-bottom:22px; }
+    #b10-paper .ln { height:14px; border-radius:7px; background:#d8cfb8; margin-bottom:22px; transform-origin:0 50%; }
+  </style>
+  <div id="root" data-composition-id="b10" data-width="650" data-height="1125">
+    <div id="b10-bg" class="clip" data-start="0" data-duration="4.68" data-layout-ignore></div>
+    <div id="b10-art" class="clip" data-start="0" data-duration="4.68" data-layout-ignore data-layout-allow-overflow>
+      <div id="b10-paper"><div class="hd">EXAM PATTERN</div><div class="ln" id="b10-l0" style="width:100%"></div><div class="ln" id="b10-l1" style="width:86%"></div><div class="ln" id="b10-l2" style="width:94%"></div><div class="ln" id="b10-l3" style="width:70%"></div><div class="ln" id="b10-l4" style="width:90%"></div><div class="ln" id="b10-l5" style="width:60%"></div><div class="ln" id="b10-l6" style="width:80%"></div></div>
+    </div>
+    <div id="b10-cap" class="clip" data-start="0" data-duration="4.68">Padhne se pehle,<br><b>US EXAM</b> ko padho</div>
+    <div id="b10-pill" class="clip" data-start="0" data-duration="4.68"><span class="pl">Har bacche ko yahi bolta hoon</span></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#b10-cap", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b10-pill .pl", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.25);
+    tl.fromTo("#b10-bg", { opacity: 0, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, 0);
+    tl.fromTo("#b10-bg", { scale: 1 }, { scale: 1.06, duration: 6, ease: "none", immediateRender: false }, 0.35);
+    tl.fromTo("#b10-paper", { y: 600, rotation: 12 }, { y: 0, rotation: -3, duration: 0.6, ease: "power3.out" }, 0.05);
+    tl.fromTo("#b10-l0", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.out" }, 0.60);
+    tl.fromTo("#b10-l1", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.out" }, 0.72);
+    tl.fromTo("#b10-l2", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.out" }, 0.84);
+    tl.fromTo("#b10-l3", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.out" }, 0.96);
+    tl.fromTo("#b10-l4", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.out" }, 1.08);
+    tl.fromTo("#b10-l5", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.out" }, 1.20);
+    tl.fromTo("#b10-l6", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.out" }, 1.32);
+
+    window.__timelines["b10"] = tl;
+  </script>
+</template>

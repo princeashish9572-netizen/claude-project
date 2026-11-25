@@ -1,110 +1,119 @@
 <!doctype html>
-<html lang="en" data-resolution="portrait"
-  data-composition-variables='[{"id":"speaker","type":"string","label":"Speaker name","default":"ATUL SIR"},{"id":"org","type":"string","label":"Organisation","default":"BHASKAR FOUNDATION"}]'>
+<html lang="en" data-resolution="portrait">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1080, height=1920" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #6b0a0e; }
       #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
-      #cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 50% 24%; }
-      #footage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
-      #vignette { position: absolute; inset: 0; z-index: 3; pointer-events: none;
-        background: radial-gradient(ellipse 80% 62% at 50% 38%, rgba(0,0,0,0) 55%, rgba(8,5,0,0.5) 100%),
-          linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0) 14%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.38) 100%); }
-      #bug-wrap { position: absolute; right: 56px; top: 70px; width: 190px; height: 190px; z-index: 7; perspective: 800px; }
-      #bug { position: absolute; left: 0; top: 0; width: 190px; height: 190px; filter: drop-shadow(0 0 14px rgba(245,196,81,0.7)); }
-      #progress-fill { position: absolute; left: 0; top: 1910px; width: 1080px; height: 10px; z-index: 7; transform-origin: 0 50%;
-        background: linear-gradient(90deg, #a8701c, #f5c451, #fff1bf); box-shadow: 0 0 16px rgba(245,196,81,0.9); }
+      #bg { position: absolute; inset: 0;
+        background:
+          radial-gradient(ellipse 60% 35% at 22% 18%, rgba(255,120,120,0.35) 0%, rgba(255,120,120,0) 70%),
+          repeating-linear-gradient(135deg, rgba(0,0,0,0.05) 0 2px, rgba(0,0,0,0) 2px 7px),
+          radial-gradient(ellipse 85% 70% at 50% 42%, #d3161d 0%, #a80d13 45%, #5c0508 100%); }
+      .lbl { position: absolute; font-family: Poppins, sans-serif; font-weight: 700; color: #fff; text-shadow: 0 0 14px rgba(255,255,255,0.7); }
+      .lbl i { position: absolute; font-family: "Playfair Display", serif; font-style: italic; font-weight: 400; color: #fff; }
+      #lbl-before { left: 140px; top: 520px; font-size: 40px; }
+      #lbl-before i { left: 70px; top: 26px; font-size: 40px; }
+      #lbl-after { left: 610px; top: 300px; font-size: 52px; }
+      #lbl-after i { left: 80px; top: 34px; font-size: 50px; }
+      #before { position: absolute; left: 60px; top: 610px; width: 330px; height: 586px; border-radius: 30px; overflow: hidden; z-index: 2;
+        box-shadow: 0 24px 50px rgba(0,0,0,0.55); background:#000; }
+      #before-v { position: absolute; left: 0; top: 0; width: 330px; height: 586px; object-fit: cover; }
+      #after { position: absolute; left: 368px; top: 400px; width: 650px; height: 1125px; border-radius: 34px; overflow: hidden; z-index: 4;
+        box-shadow: 0 30px 70px rgba(0,0,0,0.65), 0 0 0 2px rgba(255,255,255,0.12); background:#000; }
+      #cam { position: absolute; left: 0; top: 0; width: 650px; height: 1125px; transform-origin: 50% 26%; }
+      #footage { position: absolute; left: 0; top: 0; width: 650px; height: 1125px; object-fit: cover; }
+      #shade { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 28%, rgba(0,0,0,0) 62%, rgba(0,0,0,0.55) 100%); }
+      #badge { position: absolute; left: 880px; top: 70px; width: 150px; height: 150px; z-index: 6; filter: drop-shadow(0 0 18px rgba(255,214,120,0.7)); }
+      #handle { position: absolute; left: 368px; top: 1560px; width: 650px; text-align: center; font-family: Poppins, sans-serif; font-weight: 600; font-size: 32px; color: #fff; text-shadow: 0 0 12px rgba(255,255,255,0.7); z-index: 6; }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="87.5" data-width="1080" data-height="1920">
-      <div id="cam">
-        <video id="footage" class="clip" src="assets/footage.mp4" data-start="0" data-duration="84.19" data-track-index="0"
-          playsinline data-has-audio="true" data-volume="1"></video>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="86.4" data-width="1080" data-height="1920">
+      <div id="bg"></div>
+      <div id="lbl-before" class="lbl">Before<i>Version</i></div>
+      <div id="lbl-after" class="lbl">After<i>Version</i></div>
+      <div id="before">
+        <video id="before-v" class="clip" src="assets/before.mp4" data-start="0" data-duration="84.19" data-track-index="2" muted playsinline></video>
       </div>
-      <div id="vignette"></div>
-      <div id="fx" data-composition-id="fx" data-composition-src="compositions/fx.html" data-start="0" data-duration="83.00"
-        data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:4"></div>
-      <div id="frame" data-composition-id="frame" data-composition-src="compositions/frame.html" data-start="3.4" data-duration="79.20"
-        data-track-index="2" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
-      <div id="ticker" data-composition-id="ticker" data-composition-src="compositions/ticker.html" data-start="9.9" data-duration="72.70"
-        data-track-index="3" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:6"></div>
-      <div id="intro" data-composition-id="intro" data-composition-src="compositions/intro.html" data-start="0" data-duration="3.60"
-        data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:9"></div>
-      <div id="lt1" data-composition-id="lt1" data-composition-src="compositions/lt1.html" data-start="3.8" data-duration="6.00"
-        data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:9"></div>
-      <div id="lt2" data-composition-id="lt2" data-composition-src="compositions/lt2.html" data-start="42.6" data-duration="6.00"
-        data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:9"></div>
-      <div id="brand1" data-composition-id="brand1" data-composition-src="compositions/brand1.html" data-start="18.6" data-duration="2.80"
-        data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:9"></div>
-      <div id="brand2" data-composition-id="brand2" data-composition-src="compositions/brand2.html" data-start="56.6" data-duration="2.80"
-        data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:9"></div>
-      <div id="cta" data-composition-id="cta" data-composition-src="compositions/cta.html" data-start="76.4" data-duration="6.20"
-        data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:9"></div>
-      <div id="wipe1" data-composition-id="wipe1" data-composition-src="compositions/wipe1.html" data-start="6.96" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe2" data-composition-id="wipe2" data-composition-src="compositions/wipe2.html" data-start="12.67" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe3" data-composition-id="wipe3" data-composition-src="compositions/wipe3.html" data-start="25.5" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe4" data-composition-id="wipe4" data-composition-src="compositions/wipe4.html" data-start="31.89" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe5" data-composition-id="wipe5" data-composition-src="compositions/wipe5.html" data-start="37.76" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe6" data-composition-id="wipe6" data-composition-src="compositions/wipe6.html" data-start="47.04" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe7" data-composition-id="wipe7" data-composition-src="compositions/wipe7.html" data-start="52.08" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe8" data-composition-id="wipe8" data-composition-src="compositions/wipe8.html" data-start="61.93" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe9" data-composition-id="wipe9" data-composition-src="compositions/wipe9.html" data-start="65.82" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe10" data-composition-id="wipe10" data-composition-src="compositions/wipe10.html" data-start="70.46" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="wipe11" data-composition-id="wipe11" data-composition-src="compositions/wipe11.html" data-start="73.92" data-duration="0.80"
-        data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:8"></div>
-      <div id="outro" data-composition-id="outro" data-composition-src="compositions/outro.html" data-start="82.6" data-duration="4.90"
-        data-track-index="6" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:11"></div>
-      <div id="bug-wrap"><img id="bug" class="clip" src="assets/logo.png" data-start="3.3" data-duration="79.30" data-track-index="9" /></div>
-      <div id="progress-fill" class="clip" data-start="0" data-duration="82.6" data-track-index="10"></div>
-      <audio id="sfx-intro-whoosh" class="clip" src="assets/whoosh.wav" data-start="0" data-duration="1.4" data-track-index="7" data-volume="0.35"></audio>
-      <audio id="sfx-intro-shim" class="clip" src="assets/shimmer.wav" data-start="0.4" data-duration="1.6" data-track-index="8" data-volume="0.22"></audio>
-      <audio id="sfx-brand1-whoosh" class="clip" src="assets/whoosh.wav" data-start="18.4" data-duration="1.4" data-track-index="7" data-volume="0.3"></audio>
-      <audio id="sfx-brand1-shim" class="clip" src="assets/shimmer.wav" data-start="19.5" data-duration="1.6" data-track-index="8" data-volume="0.2"></audio>
-      <audio id="sfx-brand2-whoosh" class="clip" src="assets/whoosh.wav" data-start="56.4" data-duration="1.4" data-track-index="7" data-volume="0.3"></audio>
-      <audio id="sfx-brand2-shim" class="clip" src="assets/shimmer.wav" data-start="57.5" data-duration="1.6" data-track-index="8" data-volume="0.2"></audio>
-      <audio id="sfx-wipe1" class="clip" src="assets/whoosh.wav" data-start="6.76" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe2" class="clip" src="assets/whoosh.wav" data-start="12.47" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe3" class="clip" src="assets/whoosh.wav" data-start="25.3" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe4" class="clip" src="assets/whoosh.wav" data-start="31.69" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe5" class="clip" src="assets/whoosh.wav" data-start="37.56" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe6" class="clip" src="assets/whoosh.wav" data-start="46.84" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe7" class="clip" src="assets/whoosh.wav" data-start="51.88" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe8" class="clip" src="assets/whoosh.wav" data-start="61.73" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe9" class="clip" src="assets/whoosh.wav" data-start="65.62" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe10" class="clip" src="assets/whoosh.wav" data-start="70.26" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-wipe11" class="clip" src="assets/whoosh.wav" data-start="73.72" data-duration="1.4" data-track-index="7" data-volume="0.16"></audio>
-      <audio id="sfx-outro-whoosh" class="clip" src="assets/whoosh.wav" data-start="82.4" data-duration="1.4" data-track-index="7" data-volume="0.35"></audio>
-      <audio id="sfx-outro-shim" class="clip" src="assets/shimmer.wav" data-start="83.6" data-duration="1.6" data-track-index="8" data-volume="0.25"></audio>
+      <div id="after">
+        <div id="cam">
+          <video id="footage" class="clip" src="assets/footage.mp4" data-start="0" data-duration="84.19" data-track-index="0" playsinline data-has-audio="true" data-volume="1"></video>
+        </div>
+        <div id="shade"></div>
+          <div id="b01" data-composition-id="b01" data-composition-src="compositions/b01.html" data-start="0.0" data-duration="1.51"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b02" data-composition-id="b02" data-composition-src="compositions/b02.html" data-start="1.51" data-duration="2.77"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b03" data-composition-id="b03" data-composition-src="compositions/b03.html" data-start="4.28" data-duration="2.93"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b04" data-composition-id="b04" data-composition-src="compositions/b04.html" data-start="7.21" data-duration="1.88"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b05" data-composition-id="b05" data-composition-src="compositions/b05.html" data-start="9.09" data-duration="3.83"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b06" data-composition-id="b06" data-composition-src="compositions/b06.html" data-start="12.92" data-duration="3.38"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b07" data-composition-id="b07" data-composition-src="compositions/b07.html" data-start="16.3" data-duration="6.06"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b08" data-composition-id="b08" data-composition-src="compositions/b08.html" data-start="22.36" data-duration="3.39"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b09" data-composition-id="b09" data-composition-src="compositions/b09.html" data-start="25.75" data-duration="6.39"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b10" data-composition-id="b10" data-composition-src="compositions/b10.html" data-start="32.14" data-duration="4.68"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b11" data-composition-id="b11" data-composition-src="compositions/b11.html" data-start="36.82" data-duration="5.63"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b12" data-composition-id="b12" data-composition-src="compositions/b12.html" data-start="42.45" data-duration="7.33"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b13" data-composition-id="b13" data-composition-src="compositions/b13.html" data-start="49.78" data-duration="8.49"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b14" data-composition-id="b14" data-composition-src="compositions/b14.html" data-start="58.27" data-duration="4.44"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b15" data-composition-id="b15" data-composition-src="compositions/b15.html" data-start="62.71" data-duration="3.36"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b16" data-composition-id="b16" data-composition-src="compositions/b16.html" data-start="66.07" data-duration="4.64"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b17" data-composition-id="b17" data-composition-src="compositions/b17.html" data-start="70.71" data-duration="3.46"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b18" data-composition-id="b18" data-composition-src="compositions/b18.html" data-start="74.17" data-duration="6.07"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b19" data-composition-id="b19" data-composition-src="compositions/b19.html" data-start="80.24" data-duration="3.95"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+          <div id="b20" data-composition-id="b20" data-composition-src="compositions/b20.html" data-start="84.19" data-duration="2.21"
+            data-track-index="1" data-track-kind="graphics" data-width="650" data-height="1125" style="position:absolute; left:0; top:0; width:650px; height:1125px; z-index:3;"></div>
+      </div>
+      <img id="badge" class="clip" src="assets/logo.png" data-start="0" data-duration="86.4" data-track-index="3" />
+      <div id="handle" class="clip" data-start="0" data-duration="86.4" data-track-index="4">Bhaskar Foundation &nbsp;•&nbsp; Atul Sir</div>
+      <audio id="sfx-b01" class="clip" src="assets/whoosh.wav" data-start="0" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b03" class="clip" src="assets/whoosh.wav" data-start="3.98" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b05" class="clip" src="assets/whoosh.wav" data-start="8.79" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b06" class="clip" src="assets/whoosh.wav" data-start="12.62" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b07" class="clip" src="assets/whoosh.wav" data-start="16.0" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b10" class="clip" src="assets/whoosh.wav" data-start="31.84" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b12" class="clip" src="assets/whoosh.wav" data-start="42.15" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b13" class="clip" src="assets/whoosh.wav" data-start="49.48" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b14" class="clip" src="assets/whoosh.wav" data-start="57.97" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b15" class="clip" src="assets/whoosh.wav" data-start="62.41" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b16" class="clip" src="assets/whoosh.wav" data-start="65.77" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b17" class="clip" src="assets/whoosh.wav" data-start="70.41" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b18" class="clip" src="assets/whoosh.wav" data-start="73.87" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
+      <audio id="sfx-b20" class="clip" src="assets/whoosh.wav" data-start="83.89" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>
     </div>
     <script>
       const tl = gsap.timeline({ paused: true });
       const B = [0, 1.51, 4.28, 7.21, 9.09, 12.92, 16.3, 22.36, 25.75, 27.12, 32.14, 36.82, 38.01, 39.78, 42.45, 47.29, 49.78, 52.33, 56.37, 58.27, 62.18, 62.71, 64.33, 66.07, 68.41, 70.71, 72.95, 73.25, 74.17, 78.77, 80.24, 84.19];
-      const Z = [1.0, 1.14, 1.05, 1.18, 1.02, 1.12, 1.07, 1.16];
+      const Z = [1.0, 1.1, 1.03, 1.14, 1.0, 1.08, 1.05, 1.12];
       for (let i = 0; i < B.length - 1; i++) {
         const z = Z[i % Z.length];
-        tl.fromTo("#cam", { scale: z, x: 0 }, { scale: z + 0.05, x: (i % 2 ? 8 : -8), duration: B[i + 1] - B[i], ease: "none" }, B[i]);
+        tl.fromTo("#cam", { scale: z }, { scale: z + 0.04, duration: B[i + 1] - B[i], ease: "none" }, B[i]);
       }
-      tl.fromTo("#bug", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 3.3);
-      for (let t = 12; t < 80.6; t += 10) {
-        tl.fromTo("#bug", { rotationY: 0 }, { rotationY: 360, duration: 1.2, ease: "power2.inOut", immediateRender: false }, t);
-      }
-      tl.to("#bug", { opacity: 0, duration: 0.35, ease: "power2.in" }, 82.19999999999999);
-      tl.fromTo("#progress-fill", { scaleX: 0 }, { scaleX: 1, duration: 82.6, ease: "none" }, 0);
+      // Gentle float on both panels, like the reference.
+      tl.fromTo("#after", { y: 0 }, { y: -10, duration: 3, ease: "sine.inOut", yoyo: true, repeat: 27 }, 0);
+      tl.fromTo("#before", { y: 0 }, { y: 10, duration: 3.4, ease: "sine.inOut", yoyo: true, repeat: 24 }, 0);
+      tl.fromTo("#badge", { rotationY: 0 }, { rotationY: 360, duration: 1.4, ease: "power2.inOut", repeat: 9, repeatDelay: 6.6 }, 1);
       window.__timelines["main"] = tl;
     </script>
   </body>

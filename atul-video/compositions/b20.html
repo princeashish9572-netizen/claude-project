@@ -1,0 +1,31 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #b20-cap { position:absolute; left:30px; top:130px; width:590px; text-align:center; font-family:Poppins, sans-serif; font-weight:700; font-size:46px; line-height:1.15; color:#fff; text-shadow: 0 0 18px rgba(255,255,255,0.85), 0 0 40px rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.6); }
+    #b20-cap b { color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }
+    #b20-pill { position:absolute; left:0; top:820px; width:650px; text-align:center; }
+    #b20-pill .pl { display:inline-block; padding: 12px 30px; border-radius: 14px; font-family:Poppins, sans-serif; font-weight: 700; color:#1d1503;background: linear-gradient(180deg, #fff7b8 0%, #f9dc4f 100%); box-shadow: 0 0 26px rgba(255,226,90,0.85), 0 6px 18px rgba(0,0,0,0.45); font-size:46px; }
+    #b20-pill .sub { font-family:Poppins, sans-serif; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }
+    #b20-bg { position:absolute; inset:0; background: radial-gradient(ellipse 90% 60% at 50% 35%, #3a2a17 0%, #17120c 55%, #07060a 100%); }
+    #b20-art { position:absolute; left:0; top:0; width:650px; height:1125px; }
+    #b20-logo { position:absolute; left:125px; top:290px; width:400px; height:400px; filter: drop-shadow(0 0 30px rgba(245,196,81,0.7)); }
+  </style>
+  <div id="root" data-composition-id="b20" data-width="650" data-height="1125">
+    <div id="b20-bg" class="clip" data-start="0" data-duration="2.21" data-layout-ignore></div>
+    <div id="b20-art" class="clip" data-start="0" data-duration="2.21" data-layout-ignore data-layout-allow-overflow>
+      <img id="b20-logo" src="assets/logo.png" />
+    </div>
+    <div id="b20-cap" class="clip" data-start="0" data-duration="2.21">Follow karein</div>
+    <div id="b20-pill" class="clip" data-start="0" data-duration="2.21"><div class="sub">Bhaskar Foundation</div><span class="pl">Atul Sir</span></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#b20-cap", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b20-pill .pl", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.25);
+    tl.fromTo("#b20-pill .sub", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 0.5);
+    tl.fromTo("#b20-bg", { opacity: 0, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, 0);
+    tl.fromTo("#b20-bg", { scale: 1 }, { scale: 1.06, duration: 6, ease: "none", immediateRender: false }, 0.35);
+    tl.fromTo("#b20-logo", { rotationY: -540, scale: 0.3, transformPerspective: 1200 }, { rotationY: 0, scale: 1, duration: 1.0, ease: "power3.out" }, 0.05);
+    window.__timelines["b20"] = tl;
+  </script>
+</template>

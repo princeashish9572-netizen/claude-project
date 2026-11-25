@@ -1,6 +1,6 @@
-"""Generates index.html and compositions/*.html for the Atul Sir / Bhaskar Foundation video.
+"""Before / After showcase edit for Atul Sir (Bhaskar Foundation), modelled on the user's reference layout.
 
-Run: python3 build.py   (edit the timings below, then rebuild)
+Run: python3 build.py  -> writes index.html and compositions/*.html
 """
 import json
 from pathlib import Path
@@ -8,34 +8,34 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 COMP = ROOT / "compositions"
 COMP.mkdir(exist_ok=True)
+for f in COMP.glob("*.html"):
+    f.unlink()
 
-FOOT = 84.19          # silence-cut footage length
-END = 87.5            # root duration (footage + logo outro tail)
-OUTRO = 82.6
+FOOT = 84.19
+END = 86.4
 # Segment boundaries of the silence-cut footage (output seconds).
 B = [0, 1.51, 4.28, 7.21, 9.09, 12.92, 16.3, 22.36, 25.75, 27.12, 32.14, 36.82, 38.01, 39.78, 42.45,
      47.29, 49.78, 52.33, 56.37, 58.27, 62.18, 62.71, 64.33, 66.07, 68.41, 70.71, 72.95, 73.25, 74.17,
      78.77, 80.24, FOOT]
-WIPES = [7.21, 12.92, 25.75, 32.14, 38.01, 47.29, 52.33, 62.18, 66.07, 70.71, 74.17]
-BRANDS = [18.6, 56.6]
-LT = [3.8, 42.6]
-CTA = 76.4
 
-GOLD_TEXT = ("background: linear-gradient(180deg, #fff4c8 0%, #f5c451 45%, #b77a1e 100%);"
-             "-webkit-background-clip: text; background-clip: text; color: transparent;")
-RAYS = """background: repeating-conic-gradient(from 0deg, rgba(255,210,110,0.55) 0deg 4deg, rgba(255,210,110,0) 4deg 15deg);
-      -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 62%);
-      mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0) 62%);
-      mix-blend-mode: screen; border-radius: 50%;"""
+# After-panel geometry (canvas px) and the panel's own size.
+PX, PY, PW, PH = 368, 400, 650, 1125
+BX, BY, BW, BH = 60, 610, 330, 586
+
+FONT = "Poppins, sans-serif"
+GLOW = "color:#fff; text-shadow: 0 0 18px rgba(255,255,255,0.85), 0 0 40px rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.6);"
+PILL = ("display:inline-block; padding: 12px 30px; border-radius: 14px; font-family:" + FONT + "; font-weight: 700; color:#1d1503;"
+        "background: linear-gradient(180deg, #fff7b8 0%, #f9dc4f 100%); box-shadow: 0 0 26px rgba(255,226,90,0.85), 0 6px 18px rgba(0,0,0,0.45);")
+BG = ("position:absolute; inset:0; background: radial-gradient(ellipse 90% 60% at 50% 35%, #3a2a17 0%, #17120c 55%, #07060a 100%);")
 
 
-def scene(cid, css, body, js):
+def scene(cid, css, body, js, w=PW, h=PH):
     (COMP / f"{cid}.html").write_text(f"""<template>
   <style>
-    #root {{ position: absolute; inset: 0; overflow: hidden; pointer-events: none; }}
+    #root {{ position: absolute; inset: 0; overflow: hidden; }}
 {css}
   </style>
-  <div id="root" data-composition-id="{cid}" data-width="1080" data-height="1920">
+  <div id="root" data-composition-id="{cid}" data-width="{w}" data-height="{h}">
 {body}
   </div>
   <script>
@@ -47,288 +47,314 @@ def scene(cid, css, body, js):
 """)
 
 
-def badge_block(p, size):
-    """Badge with rays, burst ring and a shine band clipped to the coin."""
-    return f"""      <div id="{p}-rays"></div>
-      <div id="{p}-ring"></div>
-      <div id="{p}-coin"><img id="{p}-logo" src="assets/logo.png" /><div id="{p}-band"></div></div>"""
+beats = []  # (id, start, dur)
 
 
-def badge_css(p, size):
-    r = size * 1.7
-    return f"""    #{p}-rays {{ position: absolute; left: {(size - r) / 2}px; top: {(size - r) / 2}px; width: {r}px; height: {r}px; {RAYS} }}
-    #{p}-ring {{ position: absolute; left: 0; top: 0; width: {size}px; height: {size}px; border-radius: 50%;
-      border: 6px solid rgba(255,214,120,0.95); box-shadow: 0 0 40px rgba(255,200,90,0.9), inset 0 0 40px rgba(255,200,90,0.6); }}
-    #{p}-coin {{ position: absolute; left: 0; top: 0; width: {size}px; height: {size}px; border-radius: 50%; overflow: hidden; }}
-    #{p}-logo {{ position: absolute; left: 0; top: 0; width: {size}px; height: {size}px; }}
-    #{p}-band {{ position: absolute; left: -260px; top: -100px; width: 200px; height: {size + 200}px; transform-origin: 50% 50%;
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,235,0.85) 50%, rgba(255,255,255,0) 100%); mix-blend-mode: screen; }}"""
+def beat(cid, start, end, css, body, js):
+    beats.append((cid, start, round(end - start, 2)))
+    scene(cid, css, body, js)
 
 
-# ---------------------------------------------------------------- intro
-S = 640
-scene("intro", f"""    #intro-scrim {{ position: absolute; inset: 0;
-      background: radial-gradient(ellipse 75% 42% at 50% 50%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0) 100%); }}
-    #intro-stage {{ position: absolute; left: {540 - S/2}px; top: {960 - S/2}px; width: {S}px; height: {S}px; perspective: 1400px; }}
-{badge_css("intro", S)}""",
-f"""    <div id="intro-scrim" class="clip" data-start="0" data-duration="3.6"></div>
-    <div id="intro-stage" class="clip" data-start="0" data-duration="3.6" data-layout-allow-overflow data-layout-ignore>
-{badge_block("intro", S)}
-    </div>""",
-"""    tl.fromTo("#intro-coin", { rotationY: -70, scale: 0.78, opacity: 0.9 }, { rotationY: 0, scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.6)" }, 0);
-    tl.fromTo("#intro-rays", { opacity: 0, scale: 0.5, rotation: 0 }, { opacity: 1, scale: 1, rotation: 45, duration: 3.0, ease: "power2.out" }, 0.1);
-    tl.fromTo("#intro-ring", { opacity: 1, scale: 0.9 }, { opacity: 0, scale: 1.6, duration: 0.9, ease: "power2.out" }, 0.45);
-    tl.fromTo("#intro-band", { x: 0, rotation: 20 }, { x: 1150, rotation: 20, duration: 0.9, ease: "power2.inOut" }, 0.8);
-    tl.fromTo("#intro-band", { x: 0, rotation: 20 }, { x: 1150, rotation: 20, duration: 0.9, ease: "power2.inOut", immediateRender: false }, 1.9);
-    tl.fromTo("#intro-stage", { x: 0, y: 0, scale: 1, opacity: 1 }, { x: 410, y: -770, scale: 0.3, opacity: 0, duration: 0.75, ease: "power3.in" }, 2.8);
-    tl.fromTo("#intro-scrim", { opacity: 1 }, { opacity: 0, duration: 0.6, ease: "power2.in" }, 2.85);""")
+def enter_bg(p):
+    return f'    tl.fromTo("#{p}-bg", {{ opacity: 0, scale: 1.18 }}, {{ opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }}, 0);\n' \
+           f'    tl.fromTo("#{p}-bg", {{ scale: 1 }}, {{ scale: 1.06, duration: 6, ease: "none", immediateRender: false }}, 0.35);\n'
 
-# ---------------------------------------------------------------- lower thirds
-for i, _ in enumerate(LT, 1):
-    p = f"lt{i}"
-    scene(p, f"""    #{p}-card {{ position: absolute; left: 96px; top: 900px; width: 680px; height: 220px; border-radius: 22px; overflow: hidden;
-      background: linear-gradient(135deg, rgba(18,13,4,0.88), rgba(10,8,4,0.76)); border: 2px solid rgba(245,196,81,0.6);
-      box-shadow: 0 18px 50px rgba(0,0,0,0.55), 0 0 30px rgba(245,196,81,0.3); }}
-    #{p}-logo {{ position: absolute; left: 14px; top: 34px; width: 152px; height: 152px; }}
-    #{p}-bar {{ position: absolute; left: 180px; top: 36px; width: 6px; height: 148px; border-radius: 3px; background: linear-gradient(180deg, #fff1bf, #f5c451, #a8701c); transform-origin: 50% 0; }}
-    #{p}-name {{ position: absolute; left: 200px; top: 34px; width: 470px; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 76px; line-height: 1.05; letter-spacing: 0.02em; {GOLD_TEXT} }}
-    #{p}-rule {{ position: absolute; left: 202px; top: 128px; width: 460px; height: 3px; background: linear-gradient(90deg, #f5c451, rgba(245,196,81,0)); transform-origin: 0 50%; }}
-    #{p}-org {{ position: absolute; left: 202px; top: 144px; width: 470px; font-family: "Playfair Display", serif; font-weight: 700; font-size: 31px; letter-spacing: 0.08em; color: #fff; }}
-    #{p}-glint {{ position: absolute; left: -200px; top: 0; width: 140px; height: 220px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,246,210,0.4), rgba(255,255,255,0)); }}""",
-f"""    <div id="{p}-card" class="clip" data-start="0" data-duration="6">
-      <img id="{p}-logo" src="assets/logo.png" />
-      <div id="{p}-bar"></div>
-      <div id="{p}-name" data-var-text="speaker">ATUL SIR</div>
-      <div id="{p}-rule"></div>
-      <div id="{p}-org" data-var-text="org">BHASKAR FOUNDATION</div>
-      <div id="{p}-glint" data-layout-ignore></div>
-    </div>""",
-f"""    tl.fromTo("#{p}-card", {{ opacity: 0, x: -120 }}, {{ opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }}, 0);
-    tl.fromTo("#{p}-logo", {{ scale: 0.3, rotation: -200, opacity: 0 }}, {{ scale: 1, rotation: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }}, 0.05);
-    tl.fromTo("#{p}-bar", {{ scaleY: 0 }}, {{ scaleY: 1, duration: 0.4, ease: "power3.out" }}, 0.2);
-    tl.fromTo("#{p}-name", {{ y: 60, opacity: 0 }}, {{ y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }}, 0.3);
-    tl.fromTo("#{p}-rule", {{ scaleX: 0 }}, {{ scaleX: 1, duration: 0.6, ease: "power2.inOut" }}, 0.5);
-    tl.fromTo("#{p}-org", {{ y: 24, opacity: 0 }}, {{ y: 0, opacity: 1, duration: 0.45, ease: "power2.out" }}, 0.65);
-    tl.fromTo("#{p}-glint", {{ x: 0 }}, {{ x: 1050, duration: 1.0, ease: "power2.inOut" }}, 1.2);
-    tl.fromTo("#{p}-glint", {{ x: 0 }}, {{ x: 1050, duration: 1.0, ease: "power2.inOut", immediateRender: false }}, 3.3);
-    tl.fromTo("#{p}-logo", {{ rotationY: 0 }}, {{ rotationY: 360, duration: 1.0, ease: "power2.inOut" }}, 2.4);
-    tl.to("#{p}-card", {{ opacity: 0, x: -140, duration: 0.4, ease: "power2.in" }}, 5.5);""")
 
-# ---------------------------------------------------------------- brand stingers (spinning badge mid-video)
-S2 = 560
-for i, _ in enumerate(BRANDS, 1):
-    p = f"brand{i}"
-    scene(p, f"""    #{p}-scrim {{ position: absolute; inset: 0; background: radial-gradient(ellipse 70% 38% at 50% 52%, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%); }}
-    #{p}-stage {{ position: absolute; left: {540 - S2/2}px; top: {1000 - S2/2}px; width: {S2}px; height: {S2}px; perspective: 1400px; }}
-{badge_css(p, S2)}""",
-f"""    <div id="{p}-scrim" class="clip" data-start="0" data-duration="2.8"></div>
-    <div id="{p}-stage" class="clip" data-start="0" data-duration="2.8" data-layout-allow-overflow data-layout-ignore>
-{badge_block(p, S2)}
-    </div>""",
-f"""    tl.fromTo("#{p}-scrim", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.3, ease: "power2.out" }}, 0);
-    tl.fromTo("#{p}-coin", {{ rotationY: -540, scale: 0.2 }}, {{ rotationY: 0, scale: 1, duration: 1.1, ease: "power3.out" }}, 0);
-    tl.fromTo("#{p}-rays", {{ opacity: 0, scale: 0.4, rotation: 0 }}, {{ opacity: 1, scale: 1, rotation: 60, duration: 2.4, ease: "power2.out" }}, 0.2);
-    tl.fromTo("#{p}-ring", {{ opacity: 1, scale: 0.9 }}, {{ opacity: 0, scale: 1.8, duration: 0.8, ease: "power2.out" }}, 0.9);
-    tl.fromTo("#{p}-band", {{ x: 0, rotation: 20 }}, {{ x: 1000, rotation: 20, duration: 0.8, ease: "power2.inOut" }}, 1.2);
-    tl.fromTo("#{p}-stage", {{ scale: 1, opacity: 1 }}, {{ scale: 0.4, opacity: 0, duration: 0.45, ease: "back.in(2)" }}, 2.3);
-    tl.to("#{p}-scrim", {{ opacity: 0, duration: 0.4, ease: "power2.in" }}, 2.35);""")
+def caption(p, text, top=150, size=46):
+    css = f"    #{p}-cap {{ position:absolute; left:30px; top:{top}px; width:{PW - 60}px; text-align:center; font-family:{FONT}; font-weight:700; font-size:{size}px; line-height:1.15; {GLOW} }}\n" \
+          f"    #{p}-cap b {{ color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }}"
+    body = f'    <div id="{p}-cap" class="clip" data-start="0" data-duration="DUR">{text}</div>'
+    js = f'    tl.fromTo("#{p}-cap", {{ opacity: 0, y: 30, scale: 0.9 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2)" }}, 0.05);\n'
+    return css, body, js
 
-# ---------------------------------------------------------------- cut wipes (gold light sweep)
-for i, _ in enumerate(WIPES, 1):
-    p = f"wipe{i}"
-    flip = i % 2 == 0
-    scene(p, f"""    .{p}-bar {{ position: absolute; left: 0; top: -400px; height: 2700px; transform-origin: 50% 50%; mix-blend-mode: screen; }}
-    #{p}-a {{ width: 260px; background: linear-gradient(90deg, rgba(255,200,90,0) 0%, rgba(255,214,120,0.95) 50%, rgba(255,200,90,0) 100%); }}
-    #{p}-b {{ width: 120px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,250,230,0.9) 50%, rgba(255,255,255,0) 100%); }}
-    #{p}-flash {{ position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, rgba(255,236,190,0.85) 0%, rgba(255,200,100,0.35) 40%, rgba(255,200,100,0) 75%); }}""",
-f"""    <div id="{p}-fx" class="clip" data-start="0" data-duration="0.8" data-layout-ignore data-layout-allow-overflow>
-      <div id="{p}-flash"></div>
-      <div id="{p}-a" class="{p}-bar"></div>
-      <div id="{p}-b" class="{p}-bar"></div>
-    </div>""",
-f"""    const dir = {-1 if flip else 1}, rot = {-24 if flip else 24};
-    tl.fromTo("#{p}-a", {{ x: dir > 0 ? -500 : 1300, rotation: rot }}, {{ x: dir > 0 ? 1300 : -500, rotation: rot, duration: 0.55, ease: "power2.inOut" }}, 0);
-    tl.fromTo("#{p}-b", {{ x: dir > 0 ? -700 : 1500, rotation: rot }}, {{ x: dir > 0 ? 1400 : -600, rotation: rot, duration: 0.6, ease: "power2.inOut" }}, 0.04);
-    tl.fromTo("#{p}-flash", {{ opacity: 0.9 }}, {{ opacity: 0, duration: 0.45, ease: "power2.out" }}, 0);""")
 
-# ---------------------------------------------------------------- frame: running gold border + corner brackets
-scene("frame", """    #frame-border { position: absolute; left: 22px; top: 22px; width: 1036px; height: 1876px; padding: 5px; border-radius: 28px; overflow: hidden;
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
-    #frame-base { position: absolute; inset: 0; background: rgba(245,196,81,0.35); }
-    #frame-spin { position: absolute; left: -700px; top: -250px; width: 2436px; height: 2436px;
-      background: conic-gradient(from 0deg, rgba(255,214,120,0) 0deg, rgba(255,240,190,1) 18deg, rgba(255,190,70,0.9) 30deg, rgba(255,214,120,0) 60deg,
-        rgba(255,214,120,0) 180deg, rgba(255,240,190,1) 198deg, rgba(255,190,70,0.9) 210deg, rgba(255,214,120,0) 240deg); }
-    .frame-c { position: absolute; width: 110px; height: 110px; border-color: #f5c451; border-style: solid; border-width: 0; filter: drop-shadow(0 0 10px rgba(245,196,81,0.9)); }
-    #frame-tl { left: 40px; top: 40px; border-top-width: 8px; border-left-width: 8px; border-top-left-radius: 22px; transform-origin: 0 0; }
-    #frame-tr { right: 40px; top: 40px; border-top-width: 8px; border-right-width: 8px; border-top-right-radius: 22px; transform-origin: 100% 0; }
-    #frame-bl { left: 40px; bottom: 40px; border-bottom-width: 8px; border-left-width: 8px; border-bottom-left-radius: 22px; transform-origin: 0 100%; }
-    #frame-br { right: 40px; bottom: 40px; border-bottom-width: 8px; border-right-width: 8px; border-bottom-right-radius: 22px; transform-origin: 100% 100%; }""",
-f"""    <div id="frame-all" class="clip" data-start="0" data-duration="{OUTRO - 3.4:.2f}" data-layout-ignore data-layout-allow-overflow>
-      <div id="frame-border"><div id="frame-base"></div><div id="frame-spin"></div></div>
-      <div id="frame-tl" class="frame-c"></div><div id="frame-tr" class="frame-c"></div>
-      <div id="frame-bl" class="frame-c"></div><div id="frame-br" class="frame-c"></div>
-    </div>""",
-f"""    const D = {OUTRO - 3.4:.2f};
-    tl.fromTo("#frame-all", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.6, ease: "power2.out" }}, 0);
-    tl.fromTo(".frame-c", {{ scale: 0 }}, {{ scale: 1, duration: 0.6, ease: "back.out(2.5)", stagger: 0.08 }}, 0.1);
-    tl.fromTo("#frame-spin", {{ rotation: 0 }}, {{ rotation: 360 * Math.round(D / 5), duration: D, ease: "none" }}, 0);
-    const n = Math.floor((D - 2) / 1.6);
-    tl.fromTo(".frame-c", {{ scale: 1 }}, {{ scale: 1.12, duration: 0.8, ease: "sine.inOut", yoyo: true, repeat: n * 2 - 1, immediateRender: false }}, 1.0);
-    tl.to("#frame-all", {{ opacity: 0, duration: 0.4, ease: "power2.in" }}, D - 0.45);""")
+def pill(p, text, sub="", top=820, size=40):
+    css = f"    #{p}-pill {{ position:absolute; left:0; top:{top}px; width:{PW}px; text-align:center; }}\n" \
+          f"    #{p}-pill .pl {{ {PILL} font-size:{size}px; }}\n" \
+          f"    #{p}-pill .sub {{ font-family:{FONT}; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }}"
+    subh = f'<div class="sub">{sub}</div>' if sub else ""
+    body = f'    <div id="{p}-pill" class="clip" data-start="0" data-duration="DUR">{subh}<span class="pl">{text}</span></div>'
+    js = f'    tl.fromTo("#{p}-pill .pl", {{ scaleX: 0, opacity: 0 }}, {{ scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }}, 0.25);\n' \
+         f'    tl.fromTo("#{p}-pill .sub", {{ opacity: 0, y: 10 }}, {{ opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }}, 0.5);\n' if sub else \
+         f'    tl.fromTo("#{p}-pill .pl", {{ scaleX: 0, opacity: 0 }}, {{ scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }}, 0.25);\n'
+    return css, body, js
 
-# ---------------------------------------------------------------- ticker
-unit = "BHASKAR FOUNDATION &nbsp;•&nbsp; ATUL SIR &nbsp;•&nbsp; "
-TK0, TK1 = 9.9, OUTRO
-scene("ticker", f"""    #ticker-band {{ position: absolute; left: 0; top: 1168px; width: 1080px; height: 72px; overflow: hidden;
-      background: linear-gradient(90deg, rgba(120,70,10,0.92), rgba(30,18,4,0.92) 30%, rgba(30,18,4,0.92) 70%, rgba(120,70,10,0.92));
-      border-top: 2px solid #f5c451; border-bottom: 2px solid #f5c451; box-shadow: 0 0 24px rgba(245,196,81,0.45); }}
-    #ticker-text {{ position: absolute; left: 0; top: 13px; white-space: nowrap; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 36px; letter-spacing: 0.1em; {GOLD_TEXT} }}""",
-f"""    <div id="ticker-band" class="clip" data-start="0" data-duration="{TK1 - TK0:.2f}" data-layout-allow-overflow data-layout-allow-safe-zone data-layout-ignore>
-      <div id="ticker-text">{unit * 14}</div>
-    </div>""",
-f"""    const D = {TK1 - TK0:.2f};
-    tl.fromTo("#ticker-band", {{ scaleY: 0, opacity: 0 }}, {{ scaleY: 1, opacity: 1, duration: 0.45, ease: "back.out(2)" }}, 0);
-    tl.fromTo("#ticker-text", {{ x: 0 }}, {{ x: -D * 120, duration: D, ease: "none" }}, 0);
-    tl.to("#ticker-band", {{ opacity: 0, duration: 0.35, ease: "power2.in" }}, D - 0.4);""")
 
-# ---------------------------------------------------------------- CTA (like / share / follow)
-icons = {
-    "like": '<path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z" fill="#c8202a" stroke="#fff1bf" stroke-width="1.2"/>',
-    "share": '<path d="M14 4l7 7-7 7v-4c-5 0-8.5 1.5-11 5 1-5 4-10 11-11z" fill="#f5c451"/>',
-    "follow": '<circle cx="12" cy="12" r="10" fill="#f5c451"/><path d="M12 7v10M7 12h10" stroke="#1a1204" stroke-width="2.6" stroke-linecap="round"/>',
-}
-labels = {"like": "LIKE", "share": "SHARE", "follow": "FOLLOW"}
-pills = "\n".join(
-    f'''        <div id="cta-{k}" class="cta-pill"><svg viewBox="0 0 24 24" width="64" height="64">{v}</svg><span>{labels[k]}</span></div>'''
-    for k, v in icons.items())
-scene("cta", f"""    #cta-box {{ position: absolute; left: 150px; top: 760px; width: 600px; height: 380px; }}
-    .cta-pill {{ position: relative; display: flex; align-items: center; gap: 22px; height: 104px; margin-bottom: 22px; padding: 0 34px; width: 520px;
-      border-radius: 60px; background: linear-gradient(135deg, rgba(25,17,4,0.92), rgba(60,38,8,0.88)); border: 3px solid #f5c451;
-      box-shadow: 0 0 26px rgba(245,196,81,0.5); }}
-    .cta-pill span {{ font-family: Montserrat, sans-serif; font-weight: 900; font-size: 52px; letter-spacing: 0.08em; {GOLD_TEXT} }}""",
-f"""    <div id="cta-box" class="clip" data-start="0" data-duration="{OUTRO - CTA:.2f}">
-{pills}
-    </div>""",
-f"""    const ids = ["#cta-like", "#cta-share", "#cta-follow"];
-    ids.forEach((id, i) => {{
-      tl.fromTo(id, {{ x: -700, opacity: 0 }}, {{ x: 0, opacity: 1, duration: 0.55, ease: "back.out(1.6)" }}, 0.15 + i * 0.22);
-      tl.fromTo(id + " svg", {{ scale: 1 }}, {{ scale: 1.35, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1 }}, 1.4 + i * 0.7);
-      tl.fromTo(id, {{ scale: 1 }}, {{ scale: 1.06, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }}, 1.4 + i * 0.7);
-    }});
-    tl.to("#cta-box", {{ opacity: 0, x: 200, duration: 0.4, ease: "power2.in" }}, {OUTRO - CTA - 0.5:.2f});""")
+def assemble(cid, start, end, parts, extra_css="", extra_body="", extra_js=""):
+    dur = round(end - start, 2)
+    css = "\n".join(p[0] for p in parts) + "\n" + extra_css
+    body = extra_body + "\n" + "\n".join(p[1] for p in parts)
+    js = "".join(p[2] for p in parts) + extra_js
+    beat(cid, start, end, css, body.replace("DUR", str(dur)), js)
 
-# ---------------------------------------------------------------- fx: sparks + light leaks
-scene("fx", """    .fx-leak { position: absolute; left: 0; top: 0; width: 1000px; height: 1000px; border-radius: 50%; opacity: 0; mix-blend-mode: screen;
-      background: radial-gradient(circle, rgba(255,190,80,0.6) 0%, rgba(255,120,40,0.3) 35%, rgba(255,120,40,0) 70%); }
-    .fx-spark { position: absolute; left: 0; top: 0; width: 14px; height: 14px; border-radius: 50%; mix-blend-mode: screen;
-      background: radial-gradient(circle, #fffbe8 0%, rgba(255,205,100,0.95) 35%, rgba(255,205,100,0) 70%); }""",
-"""    <div id="fx-layer" class="clip" data-start="0" data-duration="83" data-layout-ignore data-layout-allow-overflow>
-      <div id="fx-leak-a" class="fx-leak"></div>
-      <div id="fx-leak-b" class="fx-leak"></div>
-      <div id="fx-sparks"></div>
-    </div>""",
-"""    const D = 83;
-    let s = 2024;
-    const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
-    const host = document.querySelector("#fx-sparks");
-    for (let i = 0; i < 56; i++) {
-      const el = document.createElement("div");
-      el.className = "fx-spark"; el.id = "fx-spark-" + i; host.appendChild(el);
-      const side = rnd() < 0.5;
-      const x = side ? 10 + rnd() * 260 : 810 + rnd() * 260;
-      const size = 0.6 + rnd() * 1.8, period = 5 + rnd() * 7, reps = Math.ceil(D / period), y0 = 1950 - rnd() * 700;
-      tl.fromTo(el, { x: x, y: y0, scale: size }, { y: y0 - 1700, x: x + (rnd() - 0.5) * 200, duration: period, ease: "none", repeat: reps - 1 }, rnd() * 2);
-      tl.fromTo(el, { opacity: 0 }, { opacity: 0.55 + rnd() * 0.45, duration: period / 2, ease: "sine.inOut", yoyo: true, repeat: reps * 2 - 1 }, 0);
-    }
-    const sweeps = [5.0, 14.0, 23.0, 30.0, 36.0, 45.0, 51.0, 60.0, 68.0, 77.0];
-    sweeps.forEach((t, i) => {
-      const id = i % 2 ? "#fx-leak-b" : "#fx-leak-a", L = i % 2 === 0;
-      tl.fromTo(id, { x: L ? -800 : 900, y: L ? 150 : 950, scale: 1 }, { x: L ? 900 : -800, y: L ? 750 : 250, scale: 1.5, duration: 3.0, ease: "sine.inOut" }, t);
-      tl.fromTo(id, { opacity: 0 }, { opacity: 1, duration: 1.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, t);
-    });""")
 
-# ---------------------------------------------------------------- outro
-S3 = 760
-scene("outro", f"""    #outro-bg {{ position: absolute; inset: 0; background: radial-gradient(ellipse 75% 50% at 50% 46%, #2a1a05 0%, #0b0703 55%, #000 100%); }}
-    #outro-stage {{ position: absolute; left: {540 - S3/2}px; top: {880 - S3/2}px; width: {S3}px; height: {S3}px; perspective: 1600px; }}
-{badge_css("outro", S3)}
-    #outro-name {{ position: absolute; left: 140px; top: 1320px; width: 800px; text-align: center; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 68px; letter-spacing: 0.14em; {GOLD_TEXT} }}""",
-f"""    <div id="outro-bg" class="clip" data-start="0" data-duration="{END - OUTRO:.2f}"></div>
-    <div id="outro-stage" class="clip" data-start="0.3" data-duration="{END - OUTRO - 0.3:.2f}" data-layout-allow-overflow data-layout-ignore>
-{badge_block("outro", S3)}
-    </div>
-    <div id="outro-name" class="clip" data-start="1.1" data-duration="{END - OUTRO - 1.1:.2f}" data-var-text="speaker">ATUL SIR</div>""",
-"""    tl.fromTo("#outro-bg", { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power2.out" }, 0);
-    tl.fromTo("#outro-coin", { rotationY: -720, scale: 0.3, opacity: 0 }, { rotationY: 0, scale: 1, opacity: 1, duration: 1.3, ease: "power3.out" }, 0.3);
-    tl.fromTo("#outro-rays", { opacity: 0, scale: 0.5, rotation: 0 }, { opacity: 1, scale: 1, rotation: 60, duration: 4.4, ease: "power1.out" }, 0.4);
-    tl.fromTo("#outro-ring", { opacity: 1, scale: 0.85 }, { opacity: 0, scale: 1.7, duration: 1.0, ease: "power2.out" }, 1.4);
-    tl.fromTo("#outro-band", { x: 0, rotation: 20 }, { x: 1300, rotation: 20, duration: 1.0, ease: "power2.inOut" }, 1.6);
-    tl.fromTo("#outro-band", { x: 0, rotation: 20 }, { x: 1300, rotation: 20, duration: 1.0, ease: "power2.inOut", immediateRender: false }, 3.2);
-    tl.fromTo("#outro-name", { y: 50, opacity: 0, scale: 1.4 }, { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" }, 1.1);""")
+def card(cid, start, end, art_css, art_body, art_js, cap=None, pl=None):
+    """An opaque cinematic card: background + art + caption/pill."""
+    dur = round(end - start, 2)
+    parts = []
+    if cap:
+        parts.append(caption(cid, *cap) if isinstance(cap, tuple) else caption(cid, cap))
+    if pl:
+        parts.append(pill(cid, *pl) if isinstance(pl, tuple) else pill(cid, pl))
+    css = f"    #{cid}-bg {{ {BG} }}\n    #{cid}-art {{ position:absolute; left:0; top:0; width:{PW}px; height:{PH}px; }}\n" + art_css
+    body = f'    <div id="{cid}-bg" class="clip" data-start="0" data-duration="{dur}" data-layout-ignore></div>\n' \
+           f'    <div id="{cid}-art" class="clip" data-start="0" data-duration="{dur}" data-layout-ignore data-layout-allow-overflow>\n{art_body}\n    </div>'
+    js = enter_bg(cid) + art_js
+    assemble(cid, start, end, parts, css, body, js)
 
-# ---------------------------------------------------------------- root
-Z = [1.0, 1.14, 1.05, 1.18, 1.02, 1.12, 1.07, 1.16]
-hosts = []
-def host(cid, start, dur, lane, z):
-    hosts.append(f'''      <div id="{cid}" data-composition-id="{cid}" data-composition-src="compositions/{cid}.html" data-start="{start}" data-duration="{dur:.2f}"
-        data-track-index="{lane}" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:{z}"></div>''')
 
-host("fx", 0, 83, 1, 4)
-host("frame", 3.4, OUTRO - 3.4, 2, 5)
-host("ticker", TK0, TK1 - TK0, 3, 6)
-host("intro", 0, 3.6, 4, 9)
-for i, t in enumerate(LT, 1): host(f"lt{i}", t, 6, 4, 9)
-for i, t in enumerate(BRANDS, 1): host(f"brand{i}", t, 2.8, 4, 9)
-host("cta", CTA, OUTRO - CTA, 4, 9)
-for i, t in enumerate(WIPES, 1): host(f"wipe{i}", round(t - 0.25, 2), 0.8, 5, 8)
-host("outro", OUTRO, END - OUTRO, 6, 11)
+def overlay(cid, start, end, cap=None, pl=None):
+    parts = []
+    if cap:
+        parts.append(caption(cid, *cap) if isinstance(cap, tuple) else caption(cid, cap))
+    if pl:
+        parts.append(pill(cid, *pl) if isinstance(pl, tuple) else pill(cid, pl))
+    assemble(cid, start, end, parts)
 
-sfx = []
-def a(id_, src, t, dur, lane, vol):
-    sfx.append(f'      <audio id="{id_}" class="clip" src="assets/{src}" data-start="{t}" data-duration="{dur}" data-track-index="{lane}" data-volume="{vol}"></audio>')
-a("sfx-intro-whoosh", "whoosh.wav", 0, 1.4, 7, 0.35)
-a("sfx-intro-shim", "shimmer.wav", 0.4, 1.6, 8, 0.22)
-for i, t in enumerate(BRANDS, 1):
-    a(f"sfx-brand{i}-whoosh", "whoosh.wav", round(t - 0.2, 2), 1.4, 7, 0.3)
-    a(f"sfx-brand{i}-shim", "shimmer.wav", round(t + 0.9, 2), 1.6, 8, 0.2)
-for i, t in enumerate(WIPES, 1):
-    a(f"sfx-wipe{i}", "whoosh.wav", round(t - 0.45, 2), 1.4, 7, 0.16)
-a("sfx-outro-whoosh", "whoosh.wav", 82.4, 1.4, 7, 0.35)
-a("sfx-outro-shim", "shimmer.wav", 83.6, 1.6, 8, 0.25)
+
+# ------------------------------------------------------------------ beats (text from Atul Sir's own words)
+card("b01", 0.0, 1.51,
+     "    #b01-eye { position:absolute; left:125px; top:380px; width:400px; height:400px; }",
+     """      <svg id="b01-eye" viewBox="0 0 200 200">
+        <defs><radialGradient id="b01g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffe9a6"/><stop offset="1" stop-color="#c8902a"/></radialGradient></defs>
+        <path d="M10 100 Q100 20 190 100 Q100 180 10 100Z" fill="none" stroke="#ffe066" stroke-width="6"/>
+        <circle id="b01-iris" cx="100" cy="100" r="38" fill="url(#b01g)"/><circle cx="100" cy="100" r="16" fill="#120d05"/>
+        <circle cx="112" cy="88" r="7" fill="#fff"/>
+      </svg>""",
+     """    tl.fromTo("#b01-eye", { scaleY: 0.05, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.45, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b01-iris", { x: -30 }, { x: 30, duration: 0.9, ease: "sine.inOut" }, 0.5);""",
+     cap=("<b>OBSERVATION</b><br>ka game hai", 150, 58))
+
+overlay("b02", 1.51, 4.28, cap=("Exam ke <b>pehle...</b>", 120, 50))
+
+card("b03", 4.28, 7.21,
+     """    .b03-book { position:absolute; left:155px; width:340px; height:62px; border-radius:8px; box-shadow: 0 8px 18px rgba(0,0,0,0.5); }
+    #b03-warn { position:absolute; left:205px; top:300px; width:240px; height:210px; }""",
+     "\n".join(f'      <div id="b03-book{i}" class="b03-book" style="top:{820 - i * 66}px; background: linear-gradient(90deg, {c[0]}, {c[1]});"></div>'
+               for i, c in enumerate([("#7a1418", "#b4262c"), ("#173d6e", "#2e64a8"), ("#145a32", "#239b56"), ("#6e4b0f", "#b9801f"), ("#4a1f6e", "#7d3cb5"), ("#7a1418", "#c0392b")]))
+     + """
+      <svg id="b03-warn" viewBox="0 0 120 105"><path d="M60 4 L116 100 H4 Z" fill="#ffd23f" stroke="#1d1503" stroke-width="5" stroke-linejoin="round"/>
+        <rect x="55" y="34" width="10" height="38" rx="4" fill="#1d1503"/><circle cx="60" cy="84" r="6" fill="#1d1503"/></svg>""",
+     "".join(f'    tl.fromTo("#b03-book{i}", {{ y: -900, rotation: {(-1) ** i * 8} }}, {{ y: 0, rotation: {(-1) ** i * 2}, duration: 0.45, ease: "bounce.out" }}, {0.1 + i * 0.12:.2f});\n' for i in range(6))
+     + """    tl.fromTo("#b03-warn", { scale: 0, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(3)" }, 0.9);
+    tl.fromTo("#b03-warn", { scale: 1 }, { scale: 1.12, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 1.5);""",
+     cap=("Kisi bhi <b>naye content</b> ko padhna", 110, 42), pl=("JAAN-LEVA HAMLA", "", 960, 44))
+
+overlay("b04", 7.21, 9.09, cap=("Aisa <b>kyun?</b>", 140, 70))
+
+card("b05", 9.09, 12.92,
+     """    #b05-cal { position:absolute; left:155px; top:330px; width:340px; height:380px; border-radius:26px; overflow:hidden; background:#fff; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+    #b05-top { position:absolute; left:0; top:0; width:340px; height:96px; background: linear-gradient(180deg,#d8262d,#a3151b); color:#fff; font-family:Poppins, sans-serif; font-weight:700; font-size:40px; text-align:center; line-height:96px; }
+    #b05-num { position:absolute; left:0; top:110px; width:340px; text-align:center; font-family:Poppins, sans-serif; font-weight:800; font-size:150px; color:#1d1503; line-height:1; }
+    #b05-unit { position:absolute; left:0; top:280px; width:340px; text-align:center; font-family:Poppins, sans-serif; font-weight:700; font-size:40px; color:#a3151b; }""",
+     """      <div id="b05-cal"><div id="b05-top">EXAM</div><div id="b05-num">30</div><div id="b05-unit">DIN PEHLE</div></div>""",
+     """    tl.fromTo("#b05-cal", { rotationX: -90, opacity: 0, transformPerspective: 900 }, { rotationX: 0, opacity: 1, duration: 0.6, ease: "back.out(1.6)" }, 0.1);
+    const n5 = { v: 1 };
+    tl.fromTo(n5, { v: 1 }, { v: 30, duration: 1.2, ease: "power2.out", onUpdate: () => { const el = document.querySelector("#b05-num"); if (el) el.textContent = Math.round(n5.v); } }, 0.5);""",
+     cap=("<b>Preparation</b> hoti hai", 110, 46), pl=("1 MAHINA PEHLE", "Exam se", 790, 44))
+
+card("b06", 12.92, 16.3,
+     """    #b06-watch { position:absolute; left:150px; top:300px; width:350px; height:400px; }""",
+     """      <svg id="b06-watch" viewBox="0 0 175 200">
+        <rect x="72" y="2" width="31" height="16" rx="4" fill="#f5c451"/><rect x="82" y="16" width="11" height="12" fill="#f5c451"/>
+        <circle cx="87.5" cy="112" r="80" fill="#14100a" stroke="#f5c451" stroke-width="9"/>
+        <path id="b06-arc" d="M87.5 42 A70 70 0 1 1 87.4 42" fill="none" stroke="#e3342f" stroke-width="10" stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440"/>
+        <line id="b06-hand" x1="87.5" y1="112" x2="87.5" y2="52" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="87.5" cy="112" r="8" fill="#f5c451"/>
+      </svg>""",
+     """    tl.fromTo("#b06-watch", { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b06-hand", { rotation: 0, svgOrigin: "87.5 112" }, { rotation: 720, svgOrigin: "87.5 112", duration: 3.0, ease: "none" }, 0.3);
+    tl.fromTo("#b06-arc", { strokeDashoffset: 440 }, { strokeDashoffset: 0, duration: 3.0, ease: "none" }, 0.3);""",
+     cap=("Uske baad jo bhi hota hai...", 120, 40), pl=("TEST TIME", "Ye hai", 800, 50))
+
+card("b07", 16.3, 22.36,
+     """    .b07-row { position:absolute; left:80px; width:490px; height:110px; border-radius:22px; display:flex; align-items:center; gap:22px; padding:0 26px;
+      background: rgba(255,255,255,0.08); border: 2px solid rgba(255,224,102,0.6); font-family:Poppins, sans-serif; font-weight:700; font-size:38px; color:#fff; }
+    .b07-tick { width:62px; height:62px; border-radius:50%; background:#2ecc71; display:flex; align-items:center; justify-content:center; flex:none; }""",
+     "\n".join(f'      <div id="b07-r{i}" class="b07-row" style="top:{360 + i * 150}px;"><div class="b07-tick"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M5 12l5 5 9-10" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>{t}</div>'
+               for i, t in enumerate(["Questions solve", "With analysis", "Complete timing"])),
+     "".join(f'    tl.fromTo("#b07-r{i}", {{ x: 700, opacity: 0 }}, {{ x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }}, {0.3 + i * 1.3:.2f});\n'
+             f'    tl.fromTo("#b07-r{i} .b07-tick", {{ scale: 0 }}, {{ scale: 1, duration: 0.4, ease: "back.out(3)" }}, {0.6 + i * 1.3:.2f});\n' for i in range(3)),
+     cap=("Jitne <b>questions</b> solve karoge", 130, 42), pl=("UTNA BETTER", "", 860, 46))
+
+overlay("b08", 22.36, 25.75, cap=("Aapka utna <b>better</b> rahega", 120, 46), pl=("Examination", "Result", 860, 40))
+overlay("b09", 25.75, 32.14, cap=("Baat <b>samajh</b> rahe ho?", 120, 48), pl=("Atul Sir", "Bhaskar Foundation", 860, 44))
+
+card("b10", 32.14, 36.82,
+     """    #b10-paper { position:absolute; left:165px; top:330px; width:320px; height:420px; border-radius:14px; background:#fbf6e9; box-shadow:0 20px 50px rgba(0,0,0,0.6); padding:30px; }
+    #b10-paper .hd { font-family:Poppins, sans-serif; font-weight:800; font-size:34px; color:#a3151b; text-align:center; margin-bottom:22px; }
+    #b10-paper .ln { height:14px; border-radius:7px; background:#d8cfb8; margin-bottom:22px; transform-origin:0 50%; }""",
+     """      <div id="b10-paper"><div class="hd">EXAM PATTERN</div>""" + "".join(f'<div class="ln" id="b10-l{i}" style="width:{w}%"></div>' for i, w in enumerate([100, 86, 94, 70, 90, 60, 80])) + "</div>",
+     """    tl.fromTo("#b10-paper", { y: 600, rotation: 12 }, { y: 0, rotation: -3, duration: 0.6, ease: "power3.out" }, 0.05);
+""" + "".join(f'    tl.fromTo("#b10-l{i}", {{ scaleX: 0 }}, {{ scaleX: 1, duration: 0.3, ease: "power2.out" }}, {0.6 + i * 0.12:.2f});\n' for i in range(7)),
+     cap=("Padhne se pehle,<br><b>US EXAM</b> ko padho", 100, 46), pl=("Har bacche ko yahi bolta hoon", "", 860, 30))
+
+overlay("b11", 36.82, 42.45, cap=("Iska <b>matlab</b> kya hai?", 120, 48), pl=("Exam ko PADHO", "Padhne se pehle", 860, 42))
+
+card("b12", 42.45, 49.78,
+     """    #b12-scale { position:absolute; left:5px; top:300px; width:640px; height:470px; }""",
+     """      <svg id="b12-scale" viewBox="-20 0 320 235">
+        <rect x="134" y="40" width="12" height="170" fill="#f5c451"/><rect x="90" y="205" width="100" height="16" rx="6" fill="#f5c451"/>
+        <g id="b12-beam"><rect x="20" y="36" width="240" height="10" rx="5" fill="#ffe066"/>
+          <line x1="40" y1="44" x2="40" y2="110" stroke="#ffe066" stroke-width="3"/><line x1="240" y1="44" x2="240" y2="110" stroke="#ffe066" stroke-width="3"/>
+          <g id="b12-l"><path d="M5 110 H75 Q40 140 5 110Z" fill="#2ecc71"/><text x="40" y="160" fill="#2ecc71" font-family="Poppins" font-weight="800" font-size="19" text-anchor="middle">STRENGTH</text></g>
+          <g id="b12-r"><path d="M205 110 H275 Q240 140 205 110Z" fill="#e3342f"/><text x="240" y="160" fill="#ff5a52" font-family="Poppins" font-weight="800" font-size="19" text-anchor="middle">WEAKNESS</text></g>
+        </g><circle cx="140" cy="41" r="10" fill="#fff4c8"/>
+      </svg>""",
+     """    tl.fromTo("#b12-scale", { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b12-beam", { rotation: 0, svgOrigin: "140 41" }, { rotation: 10, svgOrigin: "140 41", duration: 1.4, ease: "elastic.out(1, 0.4)" }, 0.8);
+    tl.fromTo("#b12-beam", { rotation: 10, svgOrigin: "140 41" }, { rotation: -6, svgOrigin: "140 41", duration: 1.6, ease: "elastic.out(1, 0.4)", immediateRender: false }, 3.4);""",
+     cap=("Har exam ki ek <b>strength</b><br>aur ek <b>weakness</b>", 100, 42), pl=("Simple sa matlab", "", 860, 38))
+
+card("b13", 49.78, 58.27,
+     """    #b13-target { position:absolute; left:125px; top:320px; width:400px; height:400px; }
+    #b13-arrow { position:absolute; left:0; top:0; width:400px; height:400px; }""",
+     """      <svg id="b13-target" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="92" fill="#e3342f"/><circle cx="100" cy="100" r="70" fill="#fff"/><circle cx="100" cy="100" r="48" fill="#e3342f"/>
+        <circle cx="100" cy="100" r="26" fill="#fff"/><circle cx="100" cy="100" r="10" fill="#e3342f"/>
+        <g id="b13-arrow-g"><line x1="100" y1="100" x2="190" y2="10" stroke="#f5c451" stroke-width="7" stroke-linecap="round"/>
+          <path d="M180 4 L198 2 L196 20 Z" fill="#f5c451"/></g>
+      </svg>""",
+     """    tl.fromTo("#b13-target", { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.8)" }, 0.05);
+    tl.fromTo("#b13-arrow-g", { x: 160, y: -160, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.35, ease: "power4.in" }, 1.4);
+    tl.fromTo("#b13-target", { x: 0 }, { x: 8, duration: 0.06, ease: "none", yoyo: true, repeat: 5, immediateRender: false }, 1.75);""",
+     cap=("<b>Weakness</b> pata kar li<br>aur uspar kaam kiya...", 100, 42), pl=("WEAKNESS PE KAAM", "", 860, 42))
+
+card("b14", 58.27, 62.71,
+     """    #b14-ring { position:absolute; left:135px; top:290px; width:380px; height:380px; }
+    #b14-num { position:absolute; left:0; top:405px; width:650px; text-align:center; font-family:Poppins, sans-serif; font-weight:800; font-size:120px; color:#ffe066; text-shadow:0 0 30px rgba(255,214,70,0.8); }""",
+     """      <svg id="b14-ring" viewBox="0 0 200 200"><circle cx="100" cy="100" r="84" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="18"/>
+        <circle id="b14-arc" cx="100" cy="100" r="84" fill="none" stroke="#ffe066" stroke-width="18" stroke-linecap="round" transform="rotate(-90 100 100)" stroke-dasharray="527.8" stroke-dashoffset="527.8"/></svg>
+      <div id="b14-num">0%</div>""",
+     """    tl.fromTo("#b14-ring", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b14-arc", { strokeDashoffset: 527.8 }, { strokeDashoffset: 527.8 * 0.75, duration: 1.4, ease: "power2.out" }, 0.4);
+    const n14 = { v: 0 };
+    tl.fromTo(n14, { v: 0 }, { v: 25, duration: 1.4, ease: "power2.out", onUpdate: () => { const el = document.querySelector("#b14-num"); if (el) el.textContent = Math.round(n14.v) + "%"; } }, 0.4);
+    tl.fromTo("#b14-num", { scale: 1 }, { scale: 1.15, duration: 0.2, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 1.85);""",
+     cap=("Lagbhag", 140, 44), pl=("QUESTIONS HANDLE KAR SAKTE HO", "", 860, 30))
+
+card("b15", 62.71, 66.07,
+     """    #b15-card { position:absolute; left:115px; top:330px; width:420px; height:330px; border-radius:30px; background:linear-gradient(160deg,#20304f,#0e1628); border:3px solid #4a78c2; box-shadow:0 20px 50px rgba(0,0,0,0.6); text-align:center; font-family:Poppins, sans-serif; }
+    #b15-card .t { margin-top:40px; font-size:34px; font-weight:700; color:#9fc1ff; }
+    #b15-card .n { font-size:130px; font-weight:800; color:#fff; line-height:1.05; }
+    #b15-card .u { font-size:34px; font-weight:700; color:#ffe066; }""",
+     """      <div id="b15-card"><div class="t">TOTAL</div><div class="n">200</div><div class="u">MARKS KA EXAM</div></div>""",
+     """    tl.fromTo("#b15-card", { rotationY: 90, opacity: 0, transformPerspective: 900 }, { rotationY: 0, opacity: 1, duration: 0.6, ease: "back.out(1.6)" }, 0.05);""",
+     cap=("Example ke taur pe", 130, 42), pl=("CUT-OFF KITNA JAATA HAI?", "", 860, 34))
+
+card("b16", 66.07, 70.71,
+     """    .b16-n { position:absolute; font-family:Poppins, sans-serif; font-weight:800; font-size:130px; color:#fff; text-shadow:0 0 30px rgba(255,255,255,0.6); }
+    .b16-q { position:absolute; font-family:Poppins, sans-serif; font-weight:800; font-size:110px; color:#ffe066; text-shadow:0 0 30px rgba(255,214,70,0.8); }""",
+     """      <div id="b16-a" class="b16-n" style="left:70px; top:360px;">150</div>
+      <div id="b16-b" class="b16-n" style="left:330px; top:540px;">160</div>
+      <div id="b16-q1" class="b16-q" style="left:300px; top:330px;">?</div>
+      <div id="b16-q2" class="b16-q" style="left:150px; top:560px;">?</div>""",
+     """    tl.fromTo("#b16-q1", { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, 0.1);
+    tl.fromTo("#b16-q2", { scale: 0, rotation: 40 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, 0.3);
+    tl.fromTo("#b16-a", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.5)" }, 2.35);
+    tl.fromTo("#b16-b", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.5)" }, 2.9);""",
+     cap=("Koi <b>idea?</b>", 140, 60), pl=("Cut-off expected", "", 860, 40))
+
+card("b17", 70.71, 74.17,
+     """    #b17-phone { position:absolute; left:185px; top:250px; width:280px; height:540px; border-radius:40px; background:#0b0b0f; border:6px solid #2a2a33; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.7); }
+    #b17-feed { position:absolute; left:0; top:0; width:268px; }
+    .b17-reel { width:268px; height:528px; position:relative; }
+    .b17-reel .pl { position:absolute; left:104px; top:234px; width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.85); }
+    .b17-reel .pl:after { content:""; position:absolute; left:23px; top:17px; border-left:22px solid #111; border-top:13px solid transparent; border-bottom:13px solid transparent; }
+    .b17-heart { position:absolute; right:14px; top:300px; width:40px; height:40px; }""",
+     """      <div id="b17-phone"><div id="b17-feed">""" + "".join(
+         f'<div class="b17-reel" style="background:linear-gradient(160deg,{a},{b});"><div class="pl"></div><svg class="b17-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z" fill="#ff3b5c"/></svg></div>'
+         for a, b in [("#ff5f6d", "#ffc371"), ("#4568dc", "#b06ab3"), ("#11998e", "#38ef7d"), ("#f7971e", "#ffd200")]) + "</div></div>",
+     """    tl.fromTo("#b17-phone", { y: 700, rotation: 10 }, { y: 0, rotation: 0, duration: 0.5, ease: "power3.out" }, 0.05);
+    tl.fromTo("#b17-feed", { y: 0 }, { y: -528, duration: 0.35, ease: "power2.inOut" }, 0.9);
+    tl.fromTo("#b17-feed", { y: -528 }, { y: -1056, duration: 0.35, ease: "power2.inOut", immediateRender: false }, 1.7);
+    tl.fromTo("#b17-feed", { y: -1056 }, { y: -1584, duration: 0.35, ease: "power2.inOut", immediateRender: false }, 2.5);""",
+     cap=("Ye sab <b>kahan se</b> suna?", 120, 44), pl=("REELS SE?", "Kaun sunaya?", 860, 48))
+
+card("b18", 74.17, 80.24,
+     """    #b18-bar { position:absolute; left:55px; top:420px; width:540px; height:100px; border-radius:50px; background:#fff; box-shadow:0 14px 40px rgba(0,0,0,0.6); display:flex; align-items:center; padding:0 30px; gap:18px; font-family:Poppins, sans-serif; font-weight:600; font-size:30px; color:#222; overflow:hidden; white-space:nowrap; }
+    #b18-type { display:inline-block; overflow:hidden; white-space:nowrap; width:0; }
+    #b18-cur { width:3px; height:40px; background:#1a73e8; }
+    #b18-x { position:absolute; left:235px; top:600px; width:180px; height:180px; }""",
+     """      <div id="b18-bar"><svg viewBox="0 0 24 24" width="40" height="40"><circle cx="10" cy="10" r="7" fill="none" stroke="#1a73e8" stroke-width="3"/><line x1="15" y1="15" x2="21" y2="21" stroke="#1a73e8" stroke-width="3" stroke-linecap="round"/></svg><span id="b18-type">cut-off kitna jaata hai?</span><div id="b18-cur"></div></div>
+      <svg id="b18-x" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#e3342f"/><path d="M32 32 L68 68 M68 32 L32 68" stroke="#fff" stroke-width="11" stroke-linecap="round"/></svg>""",
+     """    tl.fromTo("#b18-bar", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.5, ease: "back.out(1.8)" }, 0.05);
+    tl.fromTo("#b18-type", { width: 0 }, { width: 400, duration: 1.6, ease: "steps(24)" }, 0.6);
+    tl.fromTo("#b18-cur", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "steps(1)", yoyo: true, repeat: 15 }, 0);
+    tl.fromTo("#b18-x", { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(3)" }, 2.6);""",
+     cap=("Khud kabhi <b>search</b><br>nahi kiya", 110, 46), pl=("KITNA JAATA HAI?", "", 860, 42))
+
+overlay("b19", 80.24, FOOT, cap=("Aur ye bhi <b>General</b> ka hai...", 110, 42), pl=("Baaki category? Pata bhi nahi!", "General Category", 860, 32))
+
+card("b20", FOOT, END,
+     """    #b20-logo { position:absolute; left:125px; top:290px; width:400px; height:400px; filter: drop-shadow(0 0 30px rgba(245,196,81,0.7)); }""",
+     """      <img id="b20-logo" src="assets/logo.png" />""",
+     """    tl.fromTo("#b20-logo", { rotationY: -540, scale: 0.3, transformPerspective: 1200 }, { rotationY: 0, scale: 1, duration: 1.0, ease: "power3.out" }, 0.05);""",
+     cap=("Follow karein", 130, 46), pl=("Atul Sir", "Bhaskar Foundation", 820, 46))
+
+# ------------------------------------------------------------------ root
+hosts = "\n".join(
+    f'''          <div id="{cid}" data-composition-id="{cid}" data-composition-src="compositions/{cid}.html" data-start="{s}" data-duration="{d}"
+            data-track-index="1" data-track-kind="graphics" data-width="{PW}" data-height="{PH}" style="position:absolute; left:0; top:0; width:{PW}px; height:{PH}px; z-index:3;"></div>'''
+    for cid, s, d in beats)
+card_starts = [s for cid, s, d in beats if (COMP / f"{cid}.html").read_text().count("-bg\"") > 0]
+sfx = "\n".join(
+    f'      <audio id="sfx-{cid}" class="clip" src="assets/whoosh.wav" data-start="{max(0, round(s - 0.3, 2))}" data-duration="1.4" data-track-index="5" data-volume="0.18"></audio>'
+    for cid, s, d in beats if "-bg" in (COMP / f"{cid}.html").read_text())
+
+Z = [1.0, 1.1, 1.03, 1.14, 1.0, 1.08, 1.05, 1.12]
 
 (ROOT / "index.html").write_text(f"""<!doctype html>
-<html lang="en" data-resolution="portrait"
-  data-composition-variables='[{{"id":"speaker","type":"string","label":"Speaker name","default":"ATUL SIR"}},{{"id":"org","type":"string","label":"Organisation","default":"BHASKAR FOUNDATION"}}]'>
+<html lang="en" data-resolution="portrait">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1080, height=1920" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
     <style>
       * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-      html, body {{ width: 1080px; height: 1920px; overflow: hidden; background: #000; }}
+      html, body {{ width: 1080px; height: 1920px; overflow: hidden; background: #6b0a0e; }}
       #root {{ position: relative; width: 1080px; height: 1920px; overflow: hidden; }}
-      #cam {{ position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 50% 24%; }}
-      #footage {{ position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }}
-      #vignette {{ position: absolute; inset: 0; z-index: 3; pointer-events: none;
-        background: radial-gradient(ellipse 80% 62% at 50% 38%, rgba(0,0,0,0) 55%, rgba(8,5,0,0.5) 100%),
-          linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0) 14%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.38) 100%); }}
-      #bug-wrap {{ position: absolute; right: 56px; top: 70px; width: 190px; height: 190px; z-index: 7; perspective: 800px; }}
-      #bug {{ position: absolute; left: 0; top: 0; width: 190px; height: 190px; filter: drop-shadow(0 0 14px rgba(245,196,81,0.7)); }}
-      #progress-fill {{ position: absolute; left: 0; top: 1910px; width: 1080px; height: 10px; z-index: 7; transform-origin: 0 50%;
-        background: linear-gradient(90deg, #a8701c, #f5c451, #fff1bf); box-shadow: 0 0 16px rgba(245,196,81,0.9); }}
+      #bg {{ position: absolute; inset: 0;
+        background:
+          radial-gradient(ellipse 60% 35% at 22% 18%, rgba(255,120,120,0.35) 0%, rgba(255,120,120,0) 70%),
+          repeating-linear-gradient(135deg, rgba(0,0,0,0.05) 0 2px, rgba(0,0,0,0) 2px 7px),
+          radial-gradient(ellipse 85% 70% at 50% 42%, #d3161d 0%, #a80d13 45%, #5c0508 100%); }}
+      .lbl {{ position: absolute; font-family: Poppins, sans-serif; font-weight: 700; color: #fff; text-shadow: 0 0 14px rgba(255,255,255,0.7); }}
+      .lbl i {{ position: absolute; font-family: "Playfair Display", serif; font-style: italic; font-weight: 400; color: #fff; }}
+      #lbl-before {{ left: 140px; top: 520px; font-size: 40px; }}
+      #lbl-before i {{ left: 70px; top: 26px; font-size: 40px; }}
+      #lbl-after {{ left: 610px; top: 300px; font-size: 52px; }}
+      #lbl-after i {{ left: 80px; top: 34px; font-size: 50px; }}
+      #before {{ position: absolute; left: {BX}px; top: {BY}px; width: {BW}px; height: {BH}px; border-radius: 30px; overflow: hidden; z-index: 2;
+        box-shadow: 0 24px 50px rgba(0,0,0,0.55); background:#000; }}
+      #before-v {{ position: absolute; left: 0; top: 0; width: {BW}px; height: {BH}px; object-fit: cover; }}
+      #after {{ position: absolute; left: {PX}px; top: {PY}px; width: {PW}px; height: {PH}px; border-radius: 34px; overflow: hidden; z-index: 4;
+        box-shadow: 0 30px 70px rgba(0,0,0,0.65), 0 0 0 2px rgba(255,255,255,0.12); background:#000; }}
+      #cam {{ position: absolute; left: 0; top: 0; width: {PW}px; height: {PH}px; transform-origin: 50% 26%; }}
+      #footage {{ position: absolute; left: 0; top: 0; width: {PW}px; height: {PH}px; object-fit: cover; }}
+      #shade {{ position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 28%, rgba(0,0,0,0) 62%, rgba(0,0,0,0.55) 100%); }}
+      #badge {{ position: absolute; left: 880px; top: 70px; width: 150px; height: 150px; z-index: 6; filter: drop-shadow(0 0 18px rgba(255,214,120,0.7)); }}
+      #handle {{ position: absolute; left: 368px; top: 1560px; width: 650px; text-align: center; font-family: Poppins, sans-serif; font-weight: 600; font-size: 32px; color: #fff; text-shadow: 0 0 12px rgba(255,255,255,0.7); z-index: 6; }}
     </style>
   </head>
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="{END}" data-width="1080" data-height="1920">
-      <div id="cam">
-        <video id="footage" class="clip" src="assets/footage.mp4" data-start="0" data-duration="{FOOT}" data-track-index="0"
-          playsinline data-has-audio="true" data-volume="1"></video>
+      <div id="bg"></div>
+      <div id="lbl-before" class="lbl">Before<i>Version</i></div>
+      <div id="lbl-after" class="lbl">After<i>Version</i></div>
+      <div id="before">
+        <video id="before-v" class="clip" src="assets/before.mp4" data-start="0" data-duration="{FOOT}" data-track-index="2" muted playsinline></video>
       </div>
-      <div id="vignette"></div>
-{chr(10).join(hosts)}
-      <div id="bug-wrap"><img id="bug" class="clip" src="assets/logo.png" data-start="3.3" data-duration="{OUTRO - 3.3:.2f}" data-track-index="9" /></div>
-      <div id="progress-fill" class="clip" data-start="0" data-duration="{OUTRO}" data-track-index="10"></div>
-{chr(10).join(sfx)}
+      <div id="after">
+        <div id="cam">
+          <video id="footage" class="clip" src="assets/footage.mp4" data-start="0" data-duration="{FOOT}" data-track-index="0" playsinline data-has-audio="true" data-volume="1"></video>
+        </div>
+        <div id="shade"></div>
+{hosts}
+      </div>
+      <img id="badge" class="clip" src="assets/logo.png" data-start="0" data-duration="{END}" data-track-index="3" />
+      <div id="handle" class="clip" data-start="0" data-duration="{END}" data-track-index="4">Bhaskar Foundation &nbsp;•&nbsp; Atul Sir</div>
+{sfx}
     </div>
     <script>
       const tl = gsap.timeline({{ paused: true }});
@@ -336,17 +362,15 @@ a("sfx-outro-shim", "shimmer.wav", 83.6, 1.6, 8, 0.25)
       const Z = {json.dumps(Z)};
       for (let i = 0; i < B.length - 1; i++) {{
         const z = Z[i % Z.length];
-        tl.fromTo("#cam", {{ scale: z, x: 0 }}, {{ scale: z + 0.05, x: (i % 2 ? 8 : -8), duration: B[i + 1] - B[i], ease: "none" }}, B[i]);
+        tl.fromTo("#cam", {{ scale: z }}, {{ scale: z + 0.04, duration: B[i + 1] - B[i], ease: "none" }}, B[i]);
       }}
-      tl.fromTo("#bug", {{ opacity: 0, scale: 0.5 }}, {{ opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }}, 3.3);
-      for (let t = 12; t < {OUTRO - 2}; t += 10) {{
-        tl.fromTo("#bug", {{ rotationY: 0 }}, {{ rotationY: 360, duration: 1.2, ease: "power2.inOut", immediateRender: false }}, t);
-      }}
-      tl.to("#bug", {{ opacity: 0, duration: 0.35, ease: "power2.in" }}, {OUTRO - 0.4});
-      tl.fromTo("#progress-fill", {{ scaleX: 0 }}, {{ scaleX: 1, duration: {OUTRO}, ease: "none" }}, 0);
+      // Gentle float on both panels, like the reference.
+      tl.fromTo("#after", {{ y: 0 }}, {{ y: -10, duration: 3, ease: "sine.inOut", yoyo: true, repeat: {int(END // 3) - 1} }}, 0);
+      tl.fromTo("#before", {{ y: 0 }}, {{ y: 10, duration: 3.4, ease: "sine.inOut", yoyo: true, repeat: {int(END // 3.4) - 1} }}, 0);
+      tl.fromTo("#badge", {{ rotationY: 0 }}, {{ rotationY: 360, duration: 1.4, ease: "power2.inOut", repeat: {int(END // 8) - 1}, repeatDelay: 6.6 }}, 1);
       window.__timelines["main"] = tl;
     </script>
   </body>
 </html>
 """)
-print("built", len(hosts), "scenes,", len(sfx), "sfx")
+print("beats:", len(beats))

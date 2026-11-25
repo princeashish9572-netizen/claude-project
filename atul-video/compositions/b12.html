@@ -1,0 +1,39 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #b12-cap { position:absolute; left:30px; top:100px; width:590px; text-align:center; font-family:Poppins, sans-serif; font-weight:700; font-size:42px; line-height:1.15; color:#fff; text-shadow: 0 0 18px rgba(255,255,255,0.85), 0 0 40px rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.6); }
+    #b12-cap b { color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }
+    #b12-pill { position:absolute; left:0; top:860px; width:650px; text-align:center; }
+    #b12-pill .pl { display:inline-block; padding: 12px 30px; border-radius: 14px; font-family:Poppins, sans-serif; font-weight: 700; color:#1d1503;background: linear-gradient(180deg, #fff7b8 0%, #f9dc4f 100%); box-shadow: 0 0 26px rgba(255,226,90,0.85), 0 6px 18px rgba(0,0,0,0.45); font-size:38px; }
+    #b12-pill .sub { font-family:Poppins, sans-serif; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }
+    #b12-bg { position:absolute; inset:0; background: radial-gradient(ellipse 90% 60% at 50% 35%, #3a2a17 0%, #17120c 55%, #07060a 100%); }
+    #b12-art { position:absolute; left:0; top:0; width:650px; height:1125px; }
+    #b12-scale { position:absolute; left:5px; top:300px; width:640px; height:470px; }
+  </style>
+  <div id="root" data-composition-id="b12" data-width="650" data-height="1125">
+    <div id="b12-bg" class="clip" data-start="0" data-duration="7.33" data-layout-ignore></div>
+    <div id="b12-art" class="clip" data-start="0" data-duration="7.33" data-layout-ignore data-layout-allow-overflow>
+      <svg id="b12-scale" viewBox="-20 0 320 235">
+        <rect x="134" y="40" width="12" height="170" fill="#f5c451"/><rect x="90" y="205" width="100" height="16" rx="6" fill="#f5c451"/>
+        <g id="b12-beam"><rect x="20" y="36" width="240" height="10" rx="5" fill="#ffe066"/>
+          <line x1="40" y1="44" x2="40" y2="110" stroke="#ffe066" stroke-width="3"/><line x1="240" y1="44" x2="240" y2="110" stroke="#ffe066" stroke-width="3"/>
+          <g id="b12-l"><path d="M5 110 H75 Q40 140 5 110Z" fill="#2ecc71"/><text x="40" y="160" fill="#2ecc71" font-family="Poppins" font-weight="800" font-size="19" text-anchor="middle">STRENGTH</text></g>
+          <g id="b12-r"><path d="M205 110 H275 Q240 140 205 110Z" fill="#e3342f"/><text x="240" y="160" fill="#ff5a52" font-family="Poppins" font-weight="800" font-size="19" text-anchor="middle">WEAKNESS</text></g>
+        </g><circle cx="140" cy="41" r="10" fill="#fff4c8"/>
+      </svg>
+    </div>
+    <div id="b12-cap" class="clip" data-start="0" data-duration="7.33">Har exam ki ek <b>strength</b><br>aur ek <b>weakness</b></div>
+    <div id="b12-pill" class="clip" data-start="0" data-duration="7.33"><span class="pl">Simple sa matlab</span></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#b12-cap", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b12-pill .pl", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.25);
+    tl.fromTo("#b12-bg", { opacity: 0, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, 0);
+    tl.fromTo("#b12-bg", { scale: 1 }, { scale: 1.06, duration: 6, ease: "none", immediateRender: false }, 0.35);
+    tl.fromTo("#b12-scale", { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b12-beam", { rotation: 0, svgOrigin: "140 41" }, { rotation: 10, svgOrigin: "140 41", duration: 1.4, ease: "elastic.out(1, 0.4)" }, 0.8);
+    tl.fromTo("#b12-beam", { rotation: 10, svgOrigin: "140 41" }, { rotation: -6, svgOrigin: "140 41", duration: 1.6, ease: "elastic.out(1, 0.4)", immediateRender: false }, 3.4);
+    window.__timelines["b12"] = tl;
+  </script>
+</template>

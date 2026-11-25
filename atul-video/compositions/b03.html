@@ -1,0 +1,45 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #b03-cap { position:absolute; left:30px; top:110px; width:590px; text-align:center; font-family:Poppins, sans-serif; font-weight:700; font-size:42px; line-height:1.15; color:#fff; text-shadow: 0 0 18px rgba(255,255,255,0.85), 0 0 40px rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.6); }
+    #b03-cap b { color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }
+    #b03-pill { position:absolute; left:0; top:960px; width:650px; text-align:center; }
+    #b03-pill .pl { display:inline-block; padding: 12px 30px; border-radius: 14px; font-family:Poppins, sans-serif; font-weight: 700; color:#1d1503;background: linear-gradient(180deg, #fff7b8 0%, #f9dc4f 100%); box-shadow: 0 0 26px rgba(255,226,90,0.85), 0 6px 18px rgba(0,0,0,0.45); font-size:44px; }
+    #b03-pill .sub { font-family:Poppins, sans-serif; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }
+    #b03-bg { position:absolute; inset:0; background: radial-gradient(ellipse 90% 60% at 50% 35%, #3a2a17 0%, #17120c 55%, #07060a 100%); }
+    #b03-art { position:absolute; left:0; top:0; width:650px; height:1125px; }
+    .b03-book { position:absolute; left:155px; width:340px; height:62px; border-radius:8px; box-shadow: 0 8px 18px rgba(0,0,0,0.5); }
+    #b03-warn { position:absolute; left:205px; top:300px; width:240px; height:210px; }
+  </style>
+  <div id="root" data-composition-id="b03" data-width="650" data-height="1125">
+    <div id="b03-bg" class="clip" data-start="0" data-duration="2.93" data-layout-ignore></div>
+    <div id="b03-art" class="clip" data-start="0" data-duration="2.93" data-layout-ignore data-layout-allow-overflow>
+      <div id="b03-book0" class="b03-book" style="top:820px; background: linear-gradient(90deg, #7a1418, #b4262c);"></div>
+      <div id="b03-book1" class="b03-book" style="top:754px; background: linear-gradient(90deg, #173d6e, #2e64a8);"></div>
+      <div id="b03-book2" class="b03-book" style="top:688px; background: linear-gradient(90deg, #145a32, #239b56);"></div>
+      <div id="b03-book3" class="b03-book" style="top:622px; background: linear-gradient(90deg, #6e4b0f, #b9801f);"></div>
+      <div id="b03-book4" class="b03-book" style="top:556px; background: linear-gradient(90deg, #4a1f6e, #7d3cb5);"></div>
+      <div id="b03-book5" class="b03-book" style="top:490px; background: linear-gradient(90deg, #7a1418, #c0392b);"></div>
+      <svg id="b03-warn" viewBox="0 0 120 105"><path d="M60 4 L116 100 H4 Z" fill="#ffd23f" stroke="#1d1503" stroke-width="5" stroke-linejoin="round"/>
+        <rect x="55" y="34" width="10" height="38" rx="4" fill="#1d1503"/><circle cx="60" cy="84" r="6" fill="#1d1503"/></svg>
+    </div>
+    <div id="b03-cap" class="clip" data-start="0" data-duration="2.93">Kisi bhi <b>naye content</b> ko padhna</div>
+    <div id="b03-pill" class="clip" data-start="0" data-duration="2.93"><span class="pl">JAAN-LEVA HAMLA</span></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#b03-cap", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b03-pill .pl", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.25);
+    tl.fromTo("#b03-bg", { opacity: 0, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, 0);
+    tl.fromTo("#b03-bg", { scale: 1 }, { scale: 1.06, duration: 6, ease: "none", immediateRender: false }, 0.35);
+    tl.fromTo("#b03-book0", { y: -900, rotation: 8 }, { y: 0, rotation: 2, duration: 0.45, ease: "bounce.out" }, 0.10);
+    tl.fromTo("#b03-book1", { y: -900, rotation: -8 }, { y: 0, rotation: -2, duration: 0.45, ease: "bounce.out" }, 0.22);
+    tl.fromTo("#b03-book2", { y: -900, rotation: 8 }, { y: 0, rotation: 2, duration: 0.45, ease: "bounce.out" }, 0.34);
+    tl.fromTo("#b03-book3", { y: -900, rotation: -8 }, { y: 0, rotation: -2, duration: 0.45, ease: "bounce.out" }, 0.46);
+    tl.fromTo("#b03-book4", { y: -900, rotation: 8 }, { y: 0, rotation: 2, duration: 0.45, ease: "bounce.out" }, 0.58);
+    tl.fromTo("#b03-book5", { y: -900, rotation: -8 }, { y: 0, rotation: -2, duration: 0.45, ease: "bounce.out" }, 0.70);
+    tl.fromTo("#b03-warn", { scale: 0, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(3)" }, 0.9);
+    tl.fromTo("#b03-warn", { scale: 1 }, { scale: 1.12, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 1.5);
+    window.__timelines["b03"] = tl;
+  </script>
+</template>

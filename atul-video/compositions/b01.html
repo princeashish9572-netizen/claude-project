@@ -1,0 +1,31 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #b01-cap { position:absolute; left:30px; top:150px; width:590px; text-align:center; font-family:Poppins, sans-serif; font-weight:700; font-size:58px; line-height:1.15; color:#fff; text-shadow: 0 0 18px rgba(255,255,255,0.85), 0 0 40px rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.6); }
+    #b01-cap b { color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }
+    #b01-bg { position:absolute; inset:0; background: radial-gradient(ellipse 90% 60% at 50% 35%, #3a2a17 0%, #17120c 55%, #07060a 100%); }
+    #b01-art { position:absolute; left:0; top:0; width:650px; height:1125px; }
+    #b01-eye { position:absolute; left:125px; top:380px; width:400px; height:400px; }
+  </style>
+  <div id="root" data-composition-id="b01" data-width="650" data-height="1125">
+    <div id="b01-bg" class="clip" data-start="0" data-duration="1.51" data-layout-ignore></div>
+    <div id="b01-art" class="clip" data-start="0" data-duration="1.51" data-layout-ignore data-layout-allow-overflow>
+      <svg id="b01-eye" viewBox="0 0 200 200">
+        <defs><radialGradient id="b01g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffe9a6"/><stop offset="1" stop-color="#c8902a"/></radialGradient></defs>
+        <path d="M10 100 Q100 20 190 100 Q100 180 10 100Z" fill="none" stroke="#ffe066" stroke-width="6"/>
+        <circle id="b01-iris" cx="100" cy="100" r="38" fill="url(#b01g)"/><circle cx="100" cy="100" r="16" fill="#120d05"/>
+        <circle cx="112" cy="88" r="7" fill="#fff"/>
+      </svg>
+    </div>
+    <div id="b01-cap" class="clip" data-start="0" data-duration="1.51"><b>OBSERVATION</b><br>ka game hai</div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#b01-cap", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b01-bg", { opacity: 0, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, 0);
+    tl.fromTo("#b01-bg", { scale: 1 }, { scale: 1.06, duration: 6, ease: "none", immediateRender: false }, 0.35);
+    tl.fromTo("#b01-eye", { scaleY: 0.05, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.45, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b01-iris", { x: -30 }, { x: 30, duration: 0.9, ease: "sine.inOut" }, 0.5);
+    window.__timelines["b01"] = tl;
+  </script>
+</template>

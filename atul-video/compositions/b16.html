@@ -1,0 +1,37 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #b16-cap { position:absolute; left:30px; top:140px; width:590px; text-align:center; font-family:Poppins, sans-serif; font-weight:700; font-size:60px; line-height:1.15; color:#fff; text-shadow: 0 0 18px rgba(255,255,255,0.85), 0 0 40px rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.6); }
+    #b16-cap b { color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }
+    #b16-pill { position:absolute; left:0; top:860px; width:650px; text-align:center; }
+    #b16-pill .pl { display:inline-block; padding: 12px 30px; border-radius: 14px; font-family:Poppins, sans-serif; font-weight: 700; color:#1d1503;background: linear-gradient(180deg, #fff7b8 0%, #f9dc4f 100%); box-shadow: 0 0 26px rgba(255,226,90,0.85), 0 6px 18px rgba(0,0,0,0.45); font-size:40px; }
+    #b16-pill .sub { font-family:Poppins, sans-serif; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }
+    #b16-bg { position:absolute; inset:0; background: radial-gradient(ellipse 90% 60% at 50% 35%, #3a2a17 0%, #17120c 55%, #07060a 100%); }
+    #b16-art { position:absolute; left:0; top:0; width:650px; height:1125px; }
+    .b16-n { position:absolute; font-family:Poppins, sans-serif; font-weight:800; font-size:130px; color:#fff; text-shadow:0 0 30px rgba(255,255,255,0.6); }
+    .b16-q { position:absolute; font-family:Poppins, sans-serif; font-weight:800; font-size:110px; color:#ffe066; text-shadow:0 0 30px rgba(255,214,70,0.8); }
+  </style>
+  <div id="root" data-composition-id="b16" data-width="650" data-height="1125">
+    <div id="b16-bg" class="clip" data-start="0" data-duration="4.64" data-layout-ignore></div>
+    <div id="b16-art" class="clip" data-start="0" data-duration="4.64" data-layout-ignore data-layout-allow-overflow>
+      <div id="b16-a" class="b16-n" style="left:70px; top:360px;">150</div>
+      <div id="b16-b" class="b16-n" style="left:330px; top:540px;">160</div>
+      <div id="b16-q1" class="b16-q" style="left:300px; top:330px;">?</div>
+      <div id="b16-q2" class="b16-q" style="left:150px; top:560px;">?</div>
+    </div>
+    <div id="b16-cap" class="clip" data-start="0" data-duration="4.64">Koi <b>idea?</b></div>
+    <div id="b16-pill" class="clip" data-start="0" data-duration="4.64"><span class="pl">Cut-off expected</span></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#b16-cap", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b16-pill .pl", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.25);
+    tl.fromTo("#b16-bg", { opacity: 0, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, 0);
+    tl.fromTo("#b16-bg", { scale: 1 }, { scale: 1.06, duration: 6, ease: "none", immediateRender: false }, 0.35);
+    tl.fromTo("#b16-q1", { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, 0.1);
+    tl.fromTo("#b16-q2", { scale: 0, rotation: 40 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, 0.3);
+    tl.fromTo("#b16-a", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.5)" }, 2.35);
+    tl.fromTo("#b16-b", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.5)" }, 2.9);
+    window.__timelines["b16"] = tl;
+  </script>
+</template>

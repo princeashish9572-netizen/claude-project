@@ -1,0 +1,24 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #b11-cap { position:absolute; left:30px; top:120px; width:590px; text-align:center; font-family:Poppins, sans-serif; font-weight:700; font-size:48px; line-height:1.15; color:#fff; text-shadow: 0 0 18px rgba(255,255,255,0.85), 0 0 40px rgba(255,255,255,0.45), 0 4px 14px rgba(0,0,0,0.6); }
+    #b11-cap b { color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }
+    #b11-pill { position:absolute; left:0; top:860px; width:650px; text-align:center; }
+    #b11-pill .pl { display:inline-block; padding: 12px 30px; border-radius: 14px; font-family:Poppins, sans-serif; font-weight: 700; color:#1d1503;background: linear-gradient(180deg, #fff7b8 0%, #f9dc4f 100%); box-shadow: 0 0 26px rgba(255,226,90,0.85), 0 6px 18px rgba(0,0,0,0.45); font-size:42px; }
+    #b11-pill .sub { font-family:Poppins, sans-serif; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }
+
+  </style>
+  <div id="root" data-composition-id="b11" data-width="650" data-height="1125">
+
+    <div id="b11-cap" class="clip" data-start="0" data-duration="5.63">Iska <b>matlab</b> kya hai?</div>
+    <div id="b11-pill" class="clip" data-start="0" data-duration="5.63"><div class="sub">Padhne se pehle</div><span class="pl">Exam ko PADHO</span></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#b11-cap", { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2)" }, 0.05);
+    tl.fromTo("#b11-pill .pl", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.25);
+    tl.fromTo("#b11-pill .sub", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 0.5);
+
+    window.__timelines["b11"] = tl;
+  </script>
+</template>
