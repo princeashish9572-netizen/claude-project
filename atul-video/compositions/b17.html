@@ -5,7 +5,7 @@
     #b17-cap b { color:#ffe066; text-shadow: 0 0 18px rgba(255,214,70,0.9), 0 0 40px rgba(255,214,70,0.5); }
     #b17-pill { position:absolute; left:0; top:860px; width:650px; text-align:center; }
     #b17-pill .pl { display:inline-block; padding: 12px 30px; border-radius: 14px; font-family:Poppins, sans-serif; font-weight: 700; color:#1d1503;background: linear-gradient(180deg, #fff7b8 0%, #f9dc4f 100%); box-shadow: 0 0 26px rgba(255,226,90,0.85), 0 6px 18px rgba(0,0,0,0.45); font-size:48px; }
-    #b17-pill .sub { font-family:Poppins, sans-serif; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }
+    #b17-pill .sub { font-family:Poppins, sans-serif; font-weight:600; font-size:28px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }
     #b17-bg { position:absolute; inset:0; background: radial-gradient(ellipse 90% 60% at 50% 35%, #3a2a17 0%, #17120c 55%, #07060a 100%); }
     #b17-art { position:absolute; left:0; top:0; width:650px; height:1125px; }
     #b17-phone { position:absolute; left:185px; top:250px; width:280px; height:540px; border-radius:40px; background:#0b0b0f; border:6px solid #2a2a33; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.7); }
@@ -16,12 +16,12 @@
     .b17-heart { position:absolute; right:14px; top:300px; width:40px; height:40px; }
   </style>
   <div id="root" data-composition-id="b17" data-width="650" data-height="1125">
-    <div id="b17-bg" class="clip" data-start="0" data-duration="3.46" data-layout-ignore></div>
-    <div id="b17-art" class="clip" data-start="0" data-duration="3.46" data-layout-ignore data-layout-allow-overflow>
+    <div id="b17-bg" class="clip" data-start="0" data-duration="2.24" data-layout-ignore></div>
+    <div id="b17-art" class="clip" data-start="0" data-duration="2.24" data-layout-ignore data-layout-allow-overflow>
       <div id="b17-phone"><div id="b17-feed"><div class="b17-reel" style="background:linear-gradient(160deg,#ff5f6d,#ffc371);"><div class="pl"></div><svg class="b17-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z" fill="#ff3b5c"/></svg></div><div class="b17-reel" style="background:linear-gradient(160deg,#4568dc,#b06ab3);"><div class="pl"></div><svg class="b17-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z" fill="#ff3b5c"/></svg></div><div class="b17-reel" style="background:linear-gradient(160deg,#11998e,#38ef7d);"><div class="pl"></div><svg class="b17-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z" fill="#ff3b5c"/></svg></div><div class="b17-reel" style="background:linear-gradient(160deg,#f7971e,#ffd200);"><div class="pl"></div><svg class="b17-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z" fill="#ff3b5c"/></svg></div></div></div>
     </div>
-    <div id="b17-cap" class="clip" data-start="0" data-duration="3.46">Ye sab <b>kahan se</b> suna?</div>
-    <div id="b17-pill" class="clip" data-start="0" data-duration="3.46"><div class="sub">Kaun sunaya?</div><span class="pl">REELS SE?</span></div>
+    <div id="b17-cap" class="clip" data-start="0" data-duration="2.24">Ye sab <b>kahan se</b> suna?</div>
+    <div id="b17-pill" class="clip" data-start="0" data-duration="2.24"><div class="sub">Kaun sunaya?</div><span class="pl">REELS SE?</span></div>
   </div>
   <script>
     const tl = gsap.timeline({ paused: true });
@@ -31,9 +31,9 @@
     tl.fromTo("#b17-bg", { opacity: 0, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, 0);
     tl.fromTo("#b17-bg", { scale: 1 }, { scale: 1.06, duration: 6, ease: "none", immediateRender: false }, 0.35);
     tl.fromTo("#b17-phone", { y: 700, rotation: 10 }, { y: 0, rotation: 0, duration: 0.5, ease: "power3.out" }, 0.05);
-    tl.fromTo("#b17-feed", { y: 0 }, { y: -528, duration: 0.35, ease: "power2.inOut" }, 0.9);
-    tl.fromTo("#b17-feed", { y: -528 }, { y: -1056, duration: 0.35, ease: "power2.inOut", immediateRender: false }, 1.7);
-    tl.fromTo("#b17-feed", { y: -1056 }, { y: -1584, duration: 0.35, ease: "power2.inOut", immediateRender: false }, 2.5);
+    tl.fromTo("#b17-feed", { y: 0 }, { y: -528, duration: 0.35, ease: "power2.inOut" }, 0.7);
+    tl.fromTo("#b17-feed", { y: -528 }, { y: -1056, duration: 0.35, ease: "power2.inOut", immediateRender: false }, 1.4);
+
     window.__timelines["b17"] = tl;
   </script>
 </template>

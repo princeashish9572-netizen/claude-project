@@ -11,12 +11,11 @@ COMP.mkdir(exist_ok=True)
 for f in COMP.glob("*.html"):
     f.unlink()
 
-FOOT = 84.19
-END = 86.4
+FOOT = 54.19
+END = 56.0
 # Segment boundaries of the silence-cut footage (output seconds).
-B = [0, 1.51, 4.28, 7.21, 9.09, 12.92, 16.3, 22.36, 25.75, 27.12, 32.14, 36.82, 38.01, 39.78, 42.45,
-     47.29, 49.78, 52.33, 56.37, 58.27, 62.18, 62.71, 64.33, 66.07, 68.41, 70.71, 72.95, 73.25, 74.17,
-     78.77, 80.24, FOOT]
+B = [0, 1.51, 4.28, 7.21, 11.04, 14.42, 20.48, 23.87, 28.55, 33.39, 35.88, 37.78, 41.69, 43.31, 45.05,
+     47.35, 49.59, FOOT]
 
 # After-panel geometry (canvas px) and the panel's own size.
 PX, PY, PW, PH = 368, 400, 650, 1125
@@ -71,7 +70,7 @@ def caption(p, text, top=150, size=46):
 def pill(p, text, sub="", top=820, size=40):
     css = f"    #{p}-pill {{ position:absolute; left:0; top:{top}px; width:{PW}px; text-align:center; }}\n" \
           f"    #{p}-pill .pl {{ {PILL} font-size:{size}px; }}\n" \
-          f"    #{p}-pill .sub {{ font-family:{FONT}; font-weight:600; font-size:22px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }}"
+          f"    #{p}-pill .sub {{ font-family:{FONT}; font-weight:600; font-size:28px; color:#fff; margin-bottom:8px; text-shadow:0 2px 8px rgba(0,0,0,0.8); }}"
     subh = f'<div class="sub">{sub}</div>' if sub else ""
     body = f'    <div id="{p}-pill" class="clip" data-start="0" data-duration="DUR">{subh}<span class="pl">{text}</span></div>'
     js = f'    tl.fromTo("#{p}-pill .pl", {{ scaleX: 0, opacity: 0 }}, {{ scaleX: 1, opacity: 1, duration: 0.45, ease: "power3.out" }}, 0.25);\n' \
@@ -104,6 +103,11 @@ def card(cid, start, end, art_css, art_body, art_js, cap=None, pl=None):
 
 
 def overlay(cid, start, end, cap=None, pl=None):
+    """Text over Atul Sir's footage: kept in the lower half so the face stays clear."""
+    if isinstance(cap, tuple):
+        cap = (cap[0], 700, cap[2] if len(cap) > 2 else 46)
+    if isinstance(pl, tuple):
+        pl = (pl[0], pl[1], 900, pl[3] if len(pl) > 3 else 40)
     parts = []
     if cap:
         parts.append(caption(cid, *cap) if isinstance(cap, tuple) else caption(cid, cap))
@@ -125,7 +129,7 @@ card("b01", 0.0, 1.51,
     tl.fromTo("#b01-iris", { x: -30 }, { x: 30, duration: 0.9, ease: "sine.inOut" }, 0.5);""",
      cap=("<b>OBSERVATION</b><br>ka game hai", 150, 58))
 
-overlay("b02", 1.51, 4.28, cap=("Exam ke <b>pehle...</b>", 120, 50))
+overlay("b02", 1.51, 4.28, cap=("Exam ke <b>pehle...</b>", 120, 50), pl=("Atul Sir", "Bhaskar Foundation", 860, 44))
 
 card("b03", 4.28, 7.21,
      """    .b03-book { position:absolute; left:155px; width:340px; height:62px; border-radius:8px; box-shadow: 0 8px 18px rgba(0,0,0,0.5); }
@@ -140,9 +144,8 @@ card("b03", 4.28, 7.21,
     tl.fromTo("#b03-warn", { scale: 1 }, { scale: 1.12, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 1.5);""",
      cap=("Kisi bhi <b>naye content</b> ko padhna", 110, 42), pl=("JAAN-LEVA HAMLA", "", 960, 44))
 
-overlay("b04", 7.21, 9.09, cap=("Aisa <b>kyun?</b>", 140, 70))
 
-card("b05", 9.09, 12.92,
+card("b05", 7.21, 11.04,
      """    #b05-cal { position:absolute; left:155px; top:330px; width:340px; height:380px; border-radius:26px; overflow:hidden; background:#fff; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
     #b05-top { position:absolute; left:0; top:0; width:340px; height:96px; background: linear-gradient(180deg,#d8262d,#a3151b); color:#fff; font-family:Poppins, sans-serif; font-weight:700; font-size:40px; text-align:center; line-height:96px; }
     #b05-num { position:absolute; left:0; top:110px; width:340px; text-align:center; font-family:Poppins, sans-serif; font-weight:800; font-size:150px; color:#1d1503; line-height:1; }
@@ -153,7 +156,7 @@ card("b05", 9.09, 12.92,
     tl.fromTo(n5, { v: 1 }, { v: 30, duration: 1.2, ease: "power2.out", onUpdate: () => { const el = document.querySelector("#b05-num"); if (el) el.textContent = Math.round(n5.v); } }, 0.5);""",
      cap=("<b>Preparation</b> hoti hai", 110, 46), pl=("1 MAHINA PEHLE", "Exam se", 790, 44))
 
-card("b06", 12.92, 16.3,
+card("b06", 11.04, 14.42,
      """    #b06-watch { position:absolute; left:150px; top:300px; width:350px; height:400px; }""",
      """      <svg id="b06-watch" viewBox="0 0 175 200">
         <rect x="72" y="2" width="31" height="16" rx="4" fill="#f5c451"/><rect x="82" y="16" width="11" height="12" fill="#f5c451"/>
@@ -167,7 +170,7 @@ card("b06", 12.92, 16.3,
     tl.fromTo("#b06-arc", { strokeDashoffset: 440 }, { strokeDashoffset: 0, duration: 3.0, ease: "none" }, 0.3);""",
      cap=("Uske baad jo bhi hota hai...", 120, 40), pl=("TEST TIME", "Ye hai", 800, 50))
 
-card("b07", 16.3, 22.36,
+card("b07", 14.42, 20.48,
      """    .b07-row { position:absolute; left:80px; width:490px; height:110px; border-radius:22px; display:flex; align-items:center; gap:22px; padding:0 26px;
       background: rgba(255,255,255,0.08); border: 2px solid rgba(255,224,102,0.6); font-family:Poppins, sans-serif; font-weight:700; font-size:38px; color:#fff; }
     .b07-tick { width:62px; height:62px; border-radius:50%; background:#2ecc71; display:flex; align-items:center; justify-content:center; flex:none; }""",
@@ -177,10 +180,9 @@ card("b07", 16.3, 22.36,
              f'    tl.fromTo("#b07-r{i} .b07-tick", {{ scale: 0 }}, {{ scale: 1, duration: 0.4, ease: "back.out(3)" }}, {0.6 + i * 1.3:.2f});\n' for i in range(3)),
      cap=("Jitne <b>questions</b> solve karoge", 130, 42), pl=("UTNA BETTER", "", 860, 46))
 
-overlay("b08", 22.36, 25.75, cap=("Aapka utna <b>better</b> rahega", 120, 46), pl=("Examination", "Result", 860, 40))
-overlay("b09", 25.75, 32.14, cap=("Baat <b>samajh</b> rahe ho?", 120, 48), pl=("Atul Sir", "Bhaskar Foundation", 860, 44))
+overlay("b08", 20.48, 23.87, cap=("Aapka utna <b>better</b> rahega", 120, 46), pl=("Examination", "Result", 860, 40))
 
-card("b10", 32.14, 36.82,
+card("b10", 23.87, 28.55,
      """    #b10-paper { position:absolute; left:165px; top:330px; width:320px; height:420px; border-radius:14px; background:#fbf6e9; box-shadow:0 20px 50px rgba(0,0,0,0.6); padding:30px; }
     #b10-paper .hd { font-family:Poppins, sans-serif; font-weight:800; font-size:34px; color:#a3151b; text-align:center; margin-bottom:22px; }
     #b10-paper .ln { height:14px; border-radius:7px; background:#d8cfb8; margin-bottom:22px; transform-origin:0 50%; }""",
@@ -189,11 +191,10 @@ card("b10", 32.14, 36.82,
 """ + "".join(f'    tl.fromTo("#b10-l{i}", {{ scaleX: 0 }}, {{ scaleX: 1, duration: 0.3, ease: "power2.out" }}, {0.6 + i * 0.12:.2f});\n' for i in range(7)),
      cap=("Padhne se pehle,<br><b>US EXAM</b> ko padho", 100, 46), pl=("Har bacche ko yahi bolta hoon", "", 860, 30))
 
-overlay("b11", 36.82, 42.45, cap=("Iska <b>matlab</b> kya hai?", 120, 48), pl=("Exam ko PADHO", "Padhne se pehle", 860, 42))
 
-card("b12", 42.45, 49.78,
+card("b12", 28.55, 35.88,
      """    #b12-scale { position:absolute; left:5px; top:300px; width:640px; height:470px; }""",
-     """      <svg id="b12-scale" viewBox="-20 0 320 235">
+     """      <svg id="b12-scale" viewBox="-45 0 370 235">
         <rect x="134" y="40" width="12" height="170" fill="#f5c451"/><rect x="90" y="205" width="100" height="16" rx="6" fill="#f5c451"/>
         <g id="b12-beam"><rect x="20" y="36" width="240" height="10" rx="5" fill="#ffe066"/>
           <line x1="40" y1="44" x2="40" y2="110" stroke="#ffe066" stroke-width="3"/><line x1="240" y1="44" x2="240" y2="110" stroke="#ffe066" stroke-width="3"/>
@@ -206,7 +207,7 @@ card("b12", 42.45, 49.78,
     tl.fromTo("#b12-beam", { rotation: 10, svgOrigin: "140 41" }, { rotation: -6, svgOrigin: "140 41", duration: 1.6, ease: "elastic.out(1, 0.4)", immediateRender: false }, 3.4);""",
      cap=("Har exam ki ek <b>strength</b><br>aur ek <b>weakness</b>", 100, 42), pl=("Simple sa matlab", "", 860, 38))
 
-card("b13", 49.78, 58.27,
+card("b13", 35.88, 37.78,
      """    #b13-target { position:absolute; left:125px; top:320px; width:400px; height:400px; }
     #b13-arrow { position:absolute; left:0; top:0; width:400px; height:400px; }""",
      """      <svg id="b13-target" viewBox="0 0 200 200">
@@ -216,11 +217,11 @@ card("b13", 49.78, 58.27,
           <path d="M180 4 L198 2 L196 20 Z" fill="#f5c451"/></g>
       </svg>""",
      """    tl.fromTo("#b13-target", { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.8)" }, 0.05);
-    tl.fromTo("#b13-arrow-g", { x: 160, y: -160, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.35, ease: "power4.in" }, 1.4);
-    tl.fromTo("#b13-target", { x: 0 }, { x: 8, duration: 0.06, ease: "none", yoyo: true, repeat: 5, immediateRender: false }, 1.75);""",
-     cap=("<b>Weakness</b> pata kar li<br>aur uspar kaam kiya...", 100, 42), pl=("WEAKNESS PE KAAM", "", 860, 42))
+    tl.fromTo("#b13-arrow-g", { x: 160, y: -160, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.35, ease: "power4.in" }, 0.7);
+    tl.fromTo("#b13-target", { x: 0 }, { x: 8, duration: 0.06, ease: "none", yoyo: true, repeat: 5, immediateRender: false }, 1.05);""",
+     cap=("Agar <b>weakness</b> par<br>kaam kiya...", 100, 46), pl=("WEAKNESS PE KAAM", "", 860, 42))
 
-card("b14", 58.27, 62.71,
+card("b14", 37.78, 41.69,
      """    #b14-ring { position:absolute; left:135px; top:290px; width:380px; height:380px; }
     #b14-num { position:absolute; left:0; top:405px; width:650px; text-align:center; font-family:Poppins, sans-serif; font-weight:800; font-size:120px; color:#ffe066; text-shadow:0 0 30px rgba(255,214,70,0.8); }""",
      """      <svg id="b14-ring" viewBox="0 0 200 200"><circle cx="100" cy="100" r="84" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="18"/>
@@ -233,16 +234,16 @@ card("b14", 58.27, 62.71,
     tl.fromTo("#b14-num", { scale: 1 }, { scale: 1.15, duration: 0.2, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 1.85);""",
      cap=("Lagbhag", 140, 44), pl=("QUESTIONS HANDLE KAR SAKTE HO", "", 860, 30))
 
-card("b15", 62.71, 66.07,
+card("b15", 41.69, 43.31,
      """    #b15-card { position:absolute; left:115px; top:330px; width:420px; height:330px; border-radius:30px; background:linear-gradient(160deg,#20304f,#0e1628); border:3px solid #4a78c2; box-shadow:0 20px 50px rgba(0,0,0,0.6); text-align:center; font-family:Poppins, sans-serif; }
     #b15-card .t { margin-top:40px; font-size:34px; font-weight:700; color:#9fc1ff; }
     #b15-card .n { font-size:130px; font-weight:800; color:#fff; line-height:1.05; }
     #b15-card .u { font-size:34px; font-weight:700; color:#ffe066; }""",
      """      <div id="b15-card"><div class="t">TOTAL</div><div class="n">200</div><div class="u">MARKS KA EXAM</div></div>""",
      """    tl.fromTo("#b15-card", { rotationY: 90, opacity: 0, transformPerspective: 900 }, { rotationY: 0, opacity: 1, duration: 0.6, ease: "back.out(1.6)" }, 0.05);""",
-     cap=("Example ke taur pe", 130, 42), pl=("CUT-OFF KITNA JAATA HAI?", "", 860, 34))
+     cap=("Example ke taur pe", 130, 42), pl=("Samjho", "", 860, 40))
 
-card("b16", 66.07, 70.71,
+card("b16", 43.31, 47.35,
      """    .b16-n { position:absolute; font-family:Poppins, sans-serif; font-weight:800; font-size:130px; color:#fff; text-shadow:0 0 30px rgba(255,255,255,0.6); }
     .b16-q { position:absolute; font-family:Poppins, sans-serif; font-weight:800; font-size:110px; color:#ffe066; text-shadow:0 0 30px rgba(255,214,70,0.8); }""",
      """      <div id="b16-a" class="b16-n" style="left:70px; top:360px;">150</div>
@@ -251,11 +252,11 @@ card("b16", 66.07, 70.71,
       <div id="b16-q2" class="b16-q" style="left:150px; top:560px;">?</div>""",
      """    tl.fromTo("#b16-q1", { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, 0.1);
     tl.fromTo("#b16-q2", { scale: 0, rotation: 40 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, 0.3);
-    tl.fromTo("#b16-a", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.5)" }, 2.35);
-    tl.fromTo("#b16-b", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.5)" }, 2.9);""",
-     cap=("Koi <b>idea?</b>", 140, 60), pl=("Cut-off expected", "", 860, 40))
+    tl.fromTo("#b16-a", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.5)" }, 1.8);
+    tl.fromTo("#b16-b", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.5)" }, 2.5);""",
+     cap=("Cut-off <b>kitna</b> jaata hai?", 130, 46), pl=("Koi idea?", "", 860, 44))
 
-card("b17", 70.71, 74.17,
+card("b17", 47.35, 49.59,
      """    #b17-phone { position:absolute; left:185px; top:250px; width:280px; height:540px; border-radius:40px; background:#0b0b0f; border:6px solid #2a2a33; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.7); }
     #b17-feed { position:absolute; left:0; top:0; width:268px; }
     .b17-reel { width:268px; height:528px; position:relative; }
@@ -266,12 +267,12 @@ card("b17", 70.71, 74.17,
          f'<div class="b17-reel" style="background:linear-gradient(160deg,{a},{b});"><div class="pl"></div><svg class="b17-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z" fill="#ff3b5c"/></svg></div>'
          for a, b in [("#ff5f6d", "#ffc371"), ("#4568dc", "#b06ab3"), ("#11998e", "#38ef7d"), ("#f7971e", "#ffd200")]) + "</div></div>",
      """    tl.fromTo("#b17-phone", { y: 700, rotation: 10 }, { y: 0, rotation: 0, duration: 0.5, ease: "power3.out" }, 0.05);
-    tl.fromTo("#b17-feed", { y: 0 }, { y: -528, duration: 0.35, ease: "power2.inOut" }, 0.9);
-    tl.fromTo("#b17-feed", { y: -528 }, { y: -1056, duration: 0.35, ease: "power2.inOut", immediateRender: false }, 1.7);
-    tl.fromTo("#b17-feed", { y: -1056 }, { y: -1584, duration: 0.35, ease: "power2.inOut", immediateRender: false }, 2.5);""",
+    tl.fromTo("#b17-feed", { y: 0 }, { y: -528, duration: 0.35, ease: "power2.inOut" }, 0.7);
+    tl.fromTo("#b17-feed", { y: -528 }, { y: -1056, duration: 0.35, ease: "power2.inOut", immediateRender: false }, 1.4);
+""",
      cap=("Ye sab <b>kahan se</b> suna?", 120, 44), pl=("REELS SE?", "Kaun sunaya?", 860, 48))
 
-card("b18", 74.17, 80.24,
+card("b18", 49.59, FOOT,
      """    #b18-bar { position:absolute; left:55px; top:420px; width:540px; height:100px; border-radius:50px; background:#fff; box-shadow:0 14px 40px rgba(0,0,0,0.6); display:flex; align-items:center; padding:0 30px; gap:18px; font-family:Poppins, sans-serif; font-weight:600; font-size:30px; color:#222; overflow:hidden; white-space:nowrap; }
     #b18-type { display:inline-block; overflow:hidden; white-space:nowrap; width:0; }
     #b18-cur { width:3px; height:40px; background:#1a73e8; }
@@ -284,7 +285,6 @@ card("b18", 74.17, 80.24,
     tl.fromTo("#b18-x", { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(3)" }, 2.6);""",
      cap=("Khud kabhi <b>search</b><br>nahi kiya", 110, 46), pl=("KITNA JAATA HAI?", "", 860, 42))
 
-overlay("b19", 80.24, FOOT, cap=("Aur ye bhi <b>General</b> ka hai...", 110, 42), pl=("Baaki category? Pata bhi nahi!", "General Category", 860, 32))
 
 card("b20", FOOT, END,
      """    #b20-logo { position:absolute; left:125px; top:290px; width:400px; height:400px; filter: drop-shadow(0 0 30px rgba(245,196,81,0.7)); }""",
